@@ -1,0 +1,7 @@
+name: tfg
+channels:
+  - conda-forge
+dependencies:
+  - python
+  - numpy
+  - pandas
