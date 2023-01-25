@@ -1,7 +1,7 @@
 # CHANGELOG
 
 ## 0.0.2 (2022-01-25)
-## Demo
+### Demo
 
 - Created demo adapting from Daniel's replication package
 - Created new main script to execute the whole demo for T5 and azure but for different pruning coefficients
