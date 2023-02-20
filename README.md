@@ -4,7 +4,7 @@
 
 **Director: Silverio Martínez-Fernández**
 
-**Co-director: Matías Martínez**
+**Co-director: Matias Martinez**
 
 The research of this TFG consists of understanding how existing ML inference cloud providers optimize calculations for 
 energy reduction. We will study the following aspects of ML models deployment: 
