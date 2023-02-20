@@ -1,6 +1,6 @@
 numpy
 pandas
-pytorch==1.12.*
+pytorch
 fastapi==0.74.*
 requests==2.27.*
 sentencepiece==0.1.*
