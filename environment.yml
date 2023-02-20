@@ -2,7 +2,7 @@ name: tfg
 channels:
   - conda-forge
 dependencies:
-  - python
+  - python=3.10.*
   - numpy
   - pandas
   - pytorch==1.12.*
