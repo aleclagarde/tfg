@@ -5,7 +5,7 @@ dependencies:
   - python=3.10.*
   - numpy
   - pandas
-  - pytorch
+  - torch
   - fastapi==0.74.*
   - requests==2.27.*
   - sentencepiece==0.1.*
