@@ -1,0 +1,16 @@
+numpy
+requests
+torch
+fastapi==0.74.*
+requests==2.27.*
+sentencepiece==0.1.*
+transformers
+uvicorn[standard]==0.17.*
+codecarbon
+gunicorn
+accelerate
+seaborn
+matplotlib
+pandas
+scipy
+tabulate
