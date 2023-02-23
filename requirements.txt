@@ -1,8 +1,8 @@
 numpy
 requests
-torch
+--find-links https://download.pytorch.org/whl/torch_stable.html
+torch==1.12+cpu
 fastapi==0.74.*
-requests==2.27.*
 sentencepiece==0.1.*
 transformers
 uvicorn[standard]==0.17.*
