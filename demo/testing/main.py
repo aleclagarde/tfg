@@ -51,8 +51,10 @@ class MakeApiCall:
 
         with open("testing/sentences.txt") as my_file:
             sentences_to_post = my_file.read().splitlines()
+        with open("testing/target_sentences.txt") as my_file:
+            target_sentences = my_file.read().splitlines()
 
-        provider = ["https://azurehuggingfacetranslator.azurewebsites.net", "azure"]
+        provider = ["https://tfgdemo.azurewebsites.net", "azure"]
         print("Requesting provider: " + provider[1])
         latencies = self.make_requests(provider[0], sentences_to_post)
         self.get_results(provider[0], latencies, prune_pct)
