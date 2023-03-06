@@ -2,9 +2,7 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from fastapi.responses import FileResponse
 
-from torch.nn.utils.prune import l1_unstructured
-from transformers import T5Tokenizer, T5ForConditionalGeneration
-from codecarbon import track_emissions
+from models.t5 import infer_t5
 
 import os
 
@@ -16,14 +14,6 @@ class Input(BaseModel):
     text: str
 
 
-@track_emissions
-def infer_t5(model, tokenizer, text):
-    input_ids = tokenizer(text, return_tensors="pt").input_ids
-    outputs = model.generate(input_ids)
-
-    return tokenizer.decode(outputs[0], skip_special_tokens=True)
-
-
 def deploy(prune_pct):
     @app.head("/ping")
     @app.post("/invocations")
@@ -31,18 +21,8 @@ def deploy(prune_pct):
         input_dict = inp.dict()
         print(input_dict["language"])
         text = input_dict["language"] + " : " + input_dict["text"]
-
         # Translate text
-        # Model
-        tokenizer = T5Tokenizer.from_pretrained("t5-small")
-        model = T5ForConditionalGeneration.from_pretrained("t5-small", low_cpu_mem_usage=True)
-        # Prune the model
-        if prune_pct > 0:
-            for name, param in model.named_parameters():
-                if "embedding" in name:
-                    l1_unstructured(param, name='weight', amount=prune_pct)
-        output = infer_t5(model, tokenizer, text)
-
+        output = infer_t5(text, prune_pct)
         print(' translated_text : ', output)
         return output
 
