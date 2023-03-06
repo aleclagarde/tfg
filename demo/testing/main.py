@@ -60,5 +60,5 @@ class MakeApiCall:
         self.get_results(provider[0], latencies, prune_pct)
 
 
-def make_api_call(prune_pct):
+def make_api_call(prune_pct=0):
     MakeApiCall(prune_pct)
