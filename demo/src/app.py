@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from fastapi.responses import FileResponse
 
-from models.t5 import infer_t5
+from src.models.t5 import infer_t5
 
 import os
 
