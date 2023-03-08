@@ -11,10 +11,10 @@ class MakeApiCall:
         text = json.dumps(obj, sort_keys=True, indent=4)
         print(text)
 
-    def get_results(self, api, latencies, prune_pct):
+    def get_results(self, api, latencies):
         url = api + "/results"
         response = requests.get(url)
-        folder_name = f'T5_{prune_pct}'
+        folder_name = f'T5_'
         if response.status_code == 200:
             print("successfully fetched the data")
             output_path = os.path.join(RESULTS_PATH, folder_name)
@@ -47,7 +47,7 @@ class MakeApiCall:
 
         return requests_latency
 
-    def __init__(self, prune_pct):
+    def __init__(self):
 
         with open("testing/sentences.txt") as my_file:
             sentences_to_post = my_file.read().splitlines()
@@ -57,8 +57,8 @@ class MakeApiCall:
         provider = ["https://tfgdemo.azurewebsites.net", "azure"]
         print("Requesting provider: " + provider[1])
         latencies = self.make_requests(provider[0], sentences_to_post)
-        self.get_results(provider[0], latencies, prune_pct)
+        self.get_results(provider[0], latencies)
 
 
-def make_api_call(prune_pct=0):
-    MakeApiCall(prune_pct)
+if __name__ == "__main__":
+    api_call = MakeApiCall()
