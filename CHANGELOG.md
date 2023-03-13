@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 0.1.0 (2022-03-13)
+### Fixing problems and starting full project
+
+- Now the demo works with my own app instead of using Daniel's app
+- Added all 9 models to the models folder
+
 ## 0.0.2 (2022-01-25)
 ### Demo
 

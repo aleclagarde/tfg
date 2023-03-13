@@ -49,12 +49,12 @@ class MakeApiCall:
 
     def __init__(self):
 
-        with open("testing/sentences.txt") as my_file:
+        with open("sentences.txt") as my_file:
             sentences_to_post = my_file.read().splitlines()
-        with open("testing/target_sentences.txt") as my_file:
+        with open("target_sentences.txt") as my_file:
             target_sentences = my_file.read().splitlines()
 
-        provider = ["https://tfgdemo.azurewebsites.net", "azure"]
+        provider = ["https://tfgdemo2.azurewebsites.net", "azure"]
         print("Requesting provider: " + provider[1])
         latencies = self.make_requests(provider[0], sentences_to_post)
         self.get_results(provider[0], latencies)

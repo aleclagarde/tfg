@@ -105,34 +105,33 @@ def gen_normality_results(results: list[pd.DataFrame]):
     print(tabulate(shapiro_results, headers="firstrow", tablefmt="fancy_grid"))
 
 
-def make_reports():
-    t5_0 = "results/T5_0/API_results.csv"
-    t5_10 = "results/T5_0.1/API_results.csv"
-    t5_20 = "results/T5_0.2/API_results.csv"
-    t5_30 = "results/T5_0.3/API_results.csv"
+t5_0 = "results/T5_0/API_results.csv"
+t5_10 = "results/T5_0.1/API_results.csv"
+t5_20 = "results/T5_0.2/API_results.csv"
+t5_30 = "results/T5_0.3/API_results.csv"
 
-    t5_0_lat = "results/T5_0/latency_results.csv"
-    t5_10_lat = "results/T5_0.1/latency_results.csv"
-    t5_20_lat = "results/T5_0.2/latency_results.csv"
-    t5_30_lat = "results/T5_0.3/latency_results.csv"
+t5_0_lat = "results/T5_0/latency_results.csv"
+t5_10_lat = "results/T5_0.1/latency_results.csv"
+t5_20_lat = "results/T5_0.2/latency_results.csv"
+t5_30_lat = "results/T5_0.3/latency_results.csv"
 
-    sns.set(style="darkgrid")
-    t5_0 = pd.read_csv(t5_0)
-    t5_10 = pd.read_csv(t5_10)
-    t5_20 = pd.read_csv(t5_20)
-    t5_30 = pd.read_csv(t5_30)
+sns.set(style="darkgrid")
+t5_0 = pd.read_csv(t5_0)
+t5_10 = pd.read_csv(t5_10)
+t5_20 = pd.read_csv(t5_20)
+t5_30 = pd.read_csv(t5_30)
 
-    t5_0_lat = pd.read_csv(t5_0_lat)
-    t5_10_lat = pd.read_csv(t5_10_lat)
-    t5_20_lat = pd.read_csv(t5_20_lat)
-    t5_30_lat = pd.read_csv(t5_30_lat)
+t5_0_lat = pd.read_csv(t5_0_lat)
+t5_10_lat = pd.read_csv(t5_10_lat)
+t5_20_lat = pd.read_csv(t5_20_lat)
+t5_30_lat = pd.read_csv(t5_30_lat)
 
-    results_lat = {"t5_0": t5_0_lat, "t5_10": t5_10_lat, "t5_20": t5_20_lat, "t5_30": t5_30_lat}
+results_lat = {"t5_0": t5_0_lat, "t5_10": t5_10_lat, "t5_20": t5_20_lat, "t5_30": t5_30_lat}
 
-    t5_0['origin'] = 't5_0'
-    t5_10['origin'] = 't5_10'
-    t5_20['origin'] = 't5_20'
-    t5_30['origin'] = 't5_30'
+t5_0['origin'] = 't5_0'
+t5_10['origin'] = 't5_10'
+t5_20['origin'] = 't5_20'
+t5_30['origin'] = 't5_30'
 
-    generate_summary([t5_0, t5_10, t5_20, t5_30], results_lat)
-    gen_normality_results([t5_0, t5_10, t5_20, t5_30])
+generate_summary([t5_0, t5_10, t5_20, t5_30], results_lat)
+gen_normality_results([t5_0, t5_10, t5_20, t5_30])
