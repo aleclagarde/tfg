@@ -16,3 +16,5 @@ scipy
 tabulate
 pydantic
 scikit-learn
+tensorflow
+tensorflow_model_optimization
