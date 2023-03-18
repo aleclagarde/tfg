@@ -1,14 +1,33 @@
-from transformers import ViTFeatureExtractor, ViTForImageClassification
+from transformers import OwlViTProcessor, OwlViTForObjectDetection
 from codecarbon import track_emissions
 import torch
+import requests
+from PIL import Image
 
-tokenizer = ViTFeatureExtractor.from_pretrained("google/owlvision-v2-base-patch32")
-model = ViTForImageClassification.from_pretrained("google/owlvision-v2-base-patch32")
+processor = OwlViTProcessor.from_pretrained("google/owlvision-v2-base-patch32")
+model = OwlViTForObjectDetection.from_pretrained("google/owlvision-v2-base-patch32")
 
 
 @track_emissions
 def infer_owl_vit(image_path):
-    image = tokenizer(images=image_path, return_tensors="pt").pixel_values
-    outputs = model(image)
+    url = "http://images.cocodataset.org/val2017/000000039769.jpg"
+    image = Image.open(requests.get(url, stream=True).raw)
+    texts = [["a photo of a cat", "a photo of a dog"]]
+    inputs = processor(text=texts, images=image, return_tensors="pt")
+    outputs = model(**inputs)
 
-    return torch.argmax(outputs.logits).item()
+    # Target image sizes (height, width) to rescale box predictions [batch_size, 2]
+    target_sizes = torch.Tensor([image.size[::-1]])
+    # Convert outputs (bounding boxes and class logits) to COCO API
+    results = processor.post_process(outputs=outputs, target_sizes=target_sizes)
+
+    i = 0  # Retrieve predictions for the first image for the corresponding text queries
+    text = texts[i]
+    boxes, scores, labels = results[i]["boxes"], results[i]["scores"], results[i]["labels"]
+
+    # Print detected objects and rescaled box coordinates
+    score_threshold = 0.1
+    for box, score, label in zip(boxes, scores, labels):
+        box = [round(i, 2) for i in box.tolist()]
+        if score >= score_threshold:
+            print(f"Detected {text[label]} with confidence {round(score.item(), 3)} at location {box}")

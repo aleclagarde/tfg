@@ -9,3 +9,4 @@ codecarbon
 gunicorn
 accelerate
 pydantic
+scikit-learn

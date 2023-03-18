@@ -7,7 +7,7 @@ model = GPT2LMHeadModel.from_pretrained("gpt2")
 
 @track_emissions
 def infer_gpt2(text):
-    input_ids = tokenizer.encode(text, return_tensors="pt")
-    outputs = model.generate(input_ids, do_sample=True)
+    encoded_input = tokenizer(text, return_tensors='pt')
+    output = model(**encoded_input)
 
-    return tokenizer.decode(outputs[0], skip_special_tokens=True)
+    return output

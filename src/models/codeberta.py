@@ -7,7 +7,8 @@ model = AutoModelForCausalLM.from_pretrained("huggingface/CodeBERTa-small-v1")
 
 @track_emissions
 def infer_codeberta(text):
-    input_ids = tokenizer.encode(text, return_tensors="pt")
-    outputs = model.generate(input_ids, do_sample=True)
+    text = "def hello_world():"
+    inputs = tokenizer(text, return_tensors="pt")
+    outputs = model(**inputs)
 
     return tokenizer.decode(outputs[0], skip_special_tokens=True)

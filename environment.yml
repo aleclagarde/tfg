@@ -18,3 +18,4 @@ dependencies:
   - matplotlib
   - tabulate
   - scipy
+  - scikit-learn
