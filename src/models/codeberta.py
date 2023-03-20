@@ -1,8 +1,8 @@
-from transformers import AutoTokenizer, AutoModelForCausalLM
+from transformers import AutoTokenizer, AutoModelForMaskedLM
 from codecarbon import track_emissions
 
 tokenizer = AutoTokenizer.from_pretrained("huggingface/CodeBERTa-small-v1")
-model = AutoModelForCausalLM.from_pretrained("huggingface/CodeBERTa-small-v1")
+model = AutoModelForMaskedLM.from_pretrained("huggingface/CodeBERTa-small-v1")
 
 
 @track_emissions

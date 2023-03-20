@@ -4,8 +4,8 @@ import torch
 import requests
 from PIL import Image
 
-processor = OwlViTProcessor.from_pretrained("google/owlvision-v2-base-patch32")
-model = OwlViTForObjectDetection.from_pretrained("google/owlvision-v2-base-patch32")
+processor = OwlViTProcessor.from_pretrained("google/owlvit-v2-base-patch32")
+model = OwlViTForObjectDetection.from_pretrained("google/owlvit-v2-base-patch32")
 
 
 @track_emissions

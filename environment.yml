@@ -20,4 +20,4 @@ dependencies:
   - scipy
   - scikit-learn
   - tensorflow
-  - tensorflow_model_optimization
+  - tensorflow-model-optimization
