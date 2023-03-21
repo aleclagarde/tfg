@@ -1,5 +1,4 @@
---find-links https://download.pytorch.org/whl/torch_stable.html
-torch==1.12+cpu
+torch==1.12.*
 tensorflow
 tensorflow-model-optimization
 fastapi==0.74.*

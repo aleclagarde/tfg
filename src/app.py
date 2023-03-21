@@ -25,9 +25,11 @@ def invoke(inp: Input):
     print(' translated_text : ', output)
     return output
 
+
 @app.get("/ping")
 def ping():
     return 'ping'
+
 
 header = "timestamp,project_name,run_id,duration,emissions,emissions_rate,cpu_power,gpu_power,ram_power," \
          "cpu_energy,gpu_energy,ram_energy,energy_consumed,country_name,country_iso_code,region,cloud_provider," \
@@ -38,6 +40,7 @@ example = "2022-11-26T10:32:27,codecarbon,cc2e23fa-52a8-4ea3-a4dc-f039451bcdc4,0
           "0,3.472772259025685e-07,2.161464792341879e-06,Spain,ESP,catalonia,,," \
           "Linux-5.15.0-53-generic-x86_64-with-glibc2.35,3.10.6,4,AMD Ryzen 5 3500U with Radeon Vega Mobile Gfx," \
           ",,2.2586,41.9272,3.83160400390625,machine,N"
+
 
 @app.get("/results", responses={200: {"description": "CSV file containing all of the information collected from "
                                                      "each inference call made until now.",
