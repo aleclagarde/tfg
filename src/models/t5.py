@@ -1,8 +1,8 @@
 from transformers import T5Tokenizer, T5ForConditionalGeneration
 from codecarbon import track_emissions
 
-tokenizer = T5Tokenizer.from_pretrained("t5-small")
-model = T5ForConditionalGeneration.from_pretrained("t5-small", low_cpu_mem_usage=True)
+tokenizer = T5Tokenizer.from_pretrained("t5-base")
+model = T5ForConditionalGeneration.from_pretrained("t5-base")
 
 
 @track_emissions
