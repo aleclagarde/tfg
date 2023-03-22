@@ -5,6 +5,26 @@ import numpy
 
 RESULTS_PATH = "results"
 
+"""
+import subprocess
+import time
+
+# Get the power usage before running the code
+output_before = subprocess.check_output(['nvidia-smi', '--query-gpu=power.draw', '--format=csv'])
+power_usage_before = float(output_before.decode().strip().split('\n')[-1].strip())
+
+# Run your code here
+# ...
+
+# Get the power usage after running the code
+output_after = subprocess.check_output(['nvidia-smi', '--query-gpu=power.draw', '--format=csv'])
+power_usage_after = float(output_after.decode().strip().split('\n')[-1].strip())
+
+# Calculate the power consumption difference
+power_usage_diff = power_usage_after - power_usage_before
+
+"""
+
 
 class MakeApiCall:
     def formatted_print(self, obj):
