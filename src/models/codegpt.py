@@ -1,8 +1,8 @@
-from transformers import AutoTokenizer, AutoModelForCausalLM
+from transformers import GPT2Tokenizer, GPT2Model
 from codecarbon import track_emissions
 
-tokenizer = AutoTokenizer.from_pretrained("Salesforce/codegen-350M-mono")
-model = AutoModelForCausalLM.from_pretrained("Salesforce/codegen-350M-mono")
+tokenizer = GPT2Tokenizer.from_pretrained("microsoft/CodeGPT-small-py")
+model = GPT2Model.from_pretrained("microsoft/CodeGPT-small-py")
 
 
 @track_emissions
