@@ -106,6 +106,9 @@ for model_dict in models:
     model_torch = model_dict["model_torch"]
     model_tf = model_dict["model_tf"]
     tokenizer = model_dict["tokenizer"]
+    # Save baseline
+    model_torch.save_pretrained(f"{model_name}-torch-baseline")
+    model_tf.save_pretrained(f"{model_name}-tf-baseline")
     for method_name, method_func in pruning_methods:
         for cf in pruning_cf:
             # Instantiate the pruning method
