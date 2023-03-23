@@ -5,6 +5,10 @@ import numpy
 
 RESULTS_PATH = "results"
 
+models = ['models/t5-torch-baseline', 'models/t5-torch-pruned-0.2', 'models/t5-torch-pruned-0.5',
+          'models/t5-torch-pruned-0.8', 'models/t5-tf-baseline', 'models/t5-tf-pruned-0.2', 'models/t5-tf-pruned-0.5',
+          'models/t5-tf-pruned-0.8']
+
 """
 import subprocess
 import time
@@ -49,12 +53,12 @@ class MakeApiCall:
         else:
             print(f"Hello person, there's a {response.status_code} error with your request")
 
-    def make_requests(self, api, sentences):
+    def make_requests(self, api, model, sentences):
         url = api + "/invocations"
         requests_latency = []
         it = 0
         for sentence in sentences:
-            my_obj = {"language": "German", "text": sentence}
+            my_obj = {"model": model, "language": "German", "text": sentence}
             response = requests.post(url, json=my_obj)
             if response.status_code == 200:
                 print("successfully fetched the data with parameters provided")
@@ -79,9 +83,10 @@ class MakeApiCall:
             ["", "azure"],
         ]
         for provider in providers:
-            print("Requesting provider: " + provider[1])
-            latencies = self.make_requests(provider[0], sentences_to_post)
-            self.get_results(provider[0], latencies)
+            for model in models:
+                print(f"Requesting provider: {provider[1]} with model: {model.split('/')[1]}")
+                latencies = self.make_requests(provider[0], model, sentences_to_post)
+                self.get_results(provider[0], latencies)
 
 
 if __name__ == "__main__":
