@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 0.2.0 (2022-03-28)
+### Working local
+
+- Code adapted so it works locally
+- Changed 3 models not supported in TensorFlow
+- Added pruning procedure and run the whole thing for T5 (not working for pruned models)
+
 ## 0.1.0 (2022-03-13)
 ### Fixing problems and starting full project
 

@@ -3,7 +3,7 @@ from pydantic import BaseModel
 from fastapi.responses import FileResponse
 from transformers import T5ForConditionalGeneration, TFT5ForConditionalGeneration
 
-from models.t5 import infer_t5_torch, infer_t5_tf
+from models.t5 import infer_t5
 
 import os
 
@@ -24,13 +24,13 @@ def invoke(inp: Input):
     text = input_dict["language"] + " : " + input_dict["text"]
     if 'torch' in input_dict['model']:
         model = T5ForConditionalGeneration.from_pretrained(input_dict["model"])
-        # Translate text
-        output = infer_t5_torch(model, text)
+        framework = 'torch'
     else:
         model = TFT5ForConditionalGeneration.from_pretrained(input_dict["model"])
-        # Translate text
-        output = infer_t5_tf(model, text)
+        framework = 'tf'
 
+    # Translate text
+    output = infer_t5(model, framework, text)
     print(' translated_text : ', output)
     return output
 
