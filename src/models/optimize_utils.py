@@ -7,7 +7,9 @@ from codecarbon import track_emissions
 
 
 @track_emissions
-def prune_torch(model, model_name: str, modules, cf: float):
+def prune_torch(model, model_name: str, cf: float):
+    # Get a list of all the modules in the model
+    modules = list(model.modules())
     for module in modules:
         # Loop through each module and prune its parameters
         if isinstance(module, torch.nn.Linear) or \
@@ -19,7 +21,10 @@ def prune_torch(model, model_name: str, modules, cf: float):
 
 
 @track_emissions
-def prune_tf(model, model_name: str, modules, cf: float):
+def prune_tf(model, model_name: str, cf: float):
+    # Get a list of all the modules in the model
+    submodules = model.submodules  # Access the submodules tuple as an attribute
+    modules = list(submodules)  # Convert the submodules tuple to a list
     # Loop through each module and prune its parameters
     for module in modules:
         if isinstance(module, tf.keras.models.Sequential):

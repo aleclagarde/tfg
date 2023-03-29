@@ -85,7 +85,6 @@ models = [
 
 
 pruning_cf = [0.2, 0.5, 0.8]
-frameworks = ["torch", "tf"]
 
 # Loop over the models and the coefficients and prune each model
 for model_dict in models:
@@ -96,35 +95,22 @@ for model_dict in models:
     # Save baseline
     model_torch.save_pretrained(f"{model_name}-torch-baseline")
     model_tf.save_pretrained(f"{model_name}-tf-baseline")
-    for framework in frameworks:
-        if framework == "torch":
 
-            # PRUNING
-            for cf in pruning_cf:
-                # Get a list of all the modules in the model
-                modules = list(model_torch.modules())
-                # Loop to get 30 emissions measurements
-                for i in range(30):
-                    prune_torch(model_torch, model_name, modules, cf)
+    # PRUNING
+    for cf in pruning_cf:
+        # Loop to get 30 emissions measurements
+        for i in range(30):
+            prune_torch(model_torch, model_name, cf)
+        # Loop to get 30 emissions measurements
+        for i in range(30):
+            prune_tf(model_tf, model_name, cf)
 
-            # QUANTIZATION
-            for i in range(30):
-                quantize_torch(model_torch, model_name)
+    # QUANTIZATION
+    for i in range(30):
+        quantize_torch(model_torch, model_name)
 
-        elif framework == "tf":
-
-            # PRUNING
-            for cf in pruning_cf:
-                # Get a list of all the modules in the model
-                submodules = model_tf.submodules  # Access the submodules tuple as an attribute
-                modules = list(submodules)  # Convert the submodules tuple to a list
-                # Loop to get 30 emissions measurements
-                for i in range(30):
-                    prune_tf(model_tf, model_name, modules, cf)
-
-            # QUANTIZATION
-            for i in range(30):
-                quantize_tf(model_tf, model_name)
+    for i in range(30):
+        quantize_tf(model_tf, model_name)
 
     # Optionally, you can reload the original model from disk
     # model_dict["model"] = model.from_pretrained(f"{model_name}-{method_name}-pruned-{pruning_cf[0]}")
