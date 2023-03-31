@@ -4,6 +4,7 @@ from torch.nn.utils import prune
 import tensorflow as tf
 import tensorflow_model_optimization as tfmot
 from codecarbon import track_emissions
+import pickle
 
 
 @track_emissions
@@ -48,20 +49,43 @@ def quantize_torch(model, model_name):
         dtype=torch.qint8
     )
 
-    # Save the pruned model to disk
-    quantized_model.save_pretrained(f"{model_name}-torch-quantized")
+    # Save the state dictionary of the quantized model to disk
+    # Can't use save_pretrained with quantized models, use torch.jit.load() to load the quantized model
+    torch.save(quantized_model.state_dict(), f"{model_name}-torch-quantized.pth")
+
+
+"""
+To load back the model:
+
+state_dict = torch.load(f"{model_name}-torch-quantized.pth")
+constructor.load_state_dict(state_dict)
+"""
 
 
 @track_emissions
 def quantize_tf(model, model_name):
     # Convert the model to TensorFlow Lite format
     converter = tf.lite.TFLiteConverter.from_keras_model(model)
+    #converter.experimental_new_converter = True
+    converter.target_spec.supported_ops = [
+        tf.lite.OpsSet.TFLITE_BUILTINS,
+        tf.lite.OpsSet.SELECT_TF_OPS
+    ]
+
+    # Optimize the model
+    converter.optimizations = [tf.lite.Optimize.DEFAULT]
     tflite_model = converter.convert()
 
-    # Quantize the model
-    quantized_model = tf.lite.Interpreter(model_content=tflite_model)
-    quantized_model.allocate_tensors()
-    quantized_model.quantize()
+    # Save the state dictionary of the quantized model to disk
+    with open(f"{model_name}-tf-quantized.pkl", "wb") as f:
+        pickle.dump(tflite_model, f)
 
-    # Save the pruned model to disk
-    quantized_model.save_pretrained(f"{model_name}-tf-quantized")
+
+"""
+To load back the model:
+
+with open(f"{model_name}-tf-quantized.pkl", "rb") as f:
+    state_dict = pickle.load(f)
+quantized_model = tf.lite.Interpreter(model_content=state_dict)
+quantized_model.allocate_tensors()
+"""

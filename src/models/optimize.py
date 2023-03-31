@@ -25,91 +25,128 @@ from transformers import (
 )
 from optimize_utils import prune_torch, prune_tf, quantize_torch, quantize_tf
 
-# Define the models and their associated tokenizers
+# Define the models constructors and their associated tokenizers
 models = [
     {
         "name": "bert",
-        "tokenizer": BertTokenizer.from_pretrained("bert-base-uncased"),
-        "model_torch": BertModel.from_pretrained("bert-base-uncased"),
-        "model_tf": TFBertModel.from_pretrained("bert-base-uncased"),
+        "full_name": "bert-base-uncased",
+        "constructor_tokenizer": BertTokenizer,
+        "constructor_torch": BertModel,
+        "constructor_tf": TFBertModel,
     },
     {
         "name": "gpt2",
-        "tokenizer": GPT2Tokenizer.from_pretrained("gpt2"),
-        "model_torch": GPT2Model.from_pretrained("gpt2"),
-        "model_tf": TFGPT2Model.from_pretrained("gpt2"),
+        "full_name": "gpt2",
+        "constructor_tokenizer": GPT2Tokenizer,
+        "constructor_torch": GPT2Model,
+        "constructor_tf": TFGPT2Model,
     },
     {
         "name": "t5",
-        "tokenizer": T5Tokenizer.from_pretrained("t5-base"),
-        "model_torch": T5ForConditionalGeneration.from_pretrained("t5-base"),
-        "model_tf": TFT5ForConditionalGeneration.from_pretrained("t5-base"),
+        "full_name": "t5-base",
+        "constructor_tokenizer": T5Tokenizer,
+        "constructor_torch": T5ForConditionalGeneration,
+        "constructor_tf": TFT5ForConditionalGeneration,
     },
     {
         "name": "vit",
-        "tokenizer": ViTFeatureExtractor.from_pretrained("google/vit-base-patch16-224"),
-        "model_torch": ViTForImageClassification.from_pretrained("google/vit-base-patch16-224"),
-        "model_tf": TFViTForImageClassification.from_pretrained("google/vit-base-patch16-224"),
+        "full_name": "google/vit-base-patch16-224",
+        "constructor_tokenizer": ViTFeatureExtractor,
+        "constructor_torch": ViTForImageClassification,
+        "constructor_tf": TFViTForImageClassification,
     },
     {
         "name": "clip",
-        "tokenizer": CLIPProcessor.from_pretrained("openai/clip-vit-large-patch14"),
-        "model_torch": CLIPModel.from_pretrained("openai/clip-vit-large-patch14"),
-        "model_tf": TFCLIPModel.from_pretrained("openai/clip-vit-large-patch14"),
+        "full_name": "openai/clip-vit-large-patch14",
+        "constructor_tokenizer": CLIPProcessor,
+        "constructor_torch": CLIPModel,
+        "constructor_tf": TFCLIPModel,
     },
     {
         "name": "segformer",
-        "tokenizer": SegformerFeatureExtractor.from_pretrained("nvidia/segformer-b0-finetuned-ade-512-512"),
-        "model_torch": SegformerForSemanticSegmentation.from_pretrained("nvidia/segformer-b0-finetuned-ade-512-512"),
-        "model_tf": TFSegformerForSemanticSegmentation.from_pretrained("nvidia/segformer-b0-finetuned-ade-512-512"),
+        "full_name": "nvidia/segformer-b0-finetuned-ade-512-512",
+        "constructor_tokenizer": SegformerFeatureExtractor,
+        "constructor_torch": SegformerForSemanticSegmentation,
+        "constructor_tf": TFSegformerForSemanticSegmentation,
     },
     {
         "name": "codeparrot",
-        "tokenizer": AutoTokenizer.from_pretrained("codeparrot/codeparrot-small"),
-        "model_torch": AutoModelForCausalLM.from_pretrained("codeparrot/codeparrot-small"),
-        "model_tf": TFAutoModelForCausalLM.from_pretrained("codeparrot/codeparrot-small", from_pt=True),
+        "full_name": "codeparrot/codeparrot-small",
+        "constructor_tokenizer": AutoTokenizer,
+        "constructor_torch": AutoModelForCausalLM,
+        "constructor_tf": TFAutoModelForCausalLM,
     },
     {
         "name": "codeberta",
-        "tokenizer": AutoTokenizer.from_pretrained("huggingface/CodeBERTa-small-v1"),
-        "model_torch": AutoModelForMaskedLM.from_pretrained("huggingface/CodeBERTa-small-v1"),
-        "model_tf": TFAutoModelForMaskedLM.from_pretrained("huggingface/CodeBERTa-small-v1"),
+        "full_name": "huggingface/CodeBERTa-small-v1",
+        "constructor_tokenizer": AutoTokenizer,
+        "constructor_torch": AutoModelForMaskedLM,
+        "constructor_tf": TFAutoModelForMaskedLM,
     },
     {
         "name": "codegpt",
-        "tokenizer": GPT2Tokenizer.from_pretrained("microsoft/CodeGPT-small-py"),
-        "model_torch": GPT2Model.from_pretrained("microsoft/CodeGPT-small-py"),
-        "model_tf": TFGPT2Model.from_pretrained("microsoft/CodeGPT-small-py"),
+        "full_name": "microsoft/CodeGPT-small-py",
+        "constructor_tokenizer": GPT2Tokenizer,
+        "constructor_torch": GPT2Model,
+        "constructor_tf": TFGPT2Model,
     },
 ]
 
 
+number_of_measurements = 1
 pruning_cf = [0.2, 0.5, 0.8]
 
 # Loop over the models and the coefficients and prune each model
 for model_dict in models:
+    # Get model name
     model_name = model_dict["name"]
-    model_torch = model_dict["model_torch"]
-    model_tf = model_dict["model_tf"]
-    tokenizer = model_dict["tokenizer"]
+    if model_name != 't5':
+        continue
+    # Initialize models
+    model_torch = model_dict["constructor_torch"].from_pretrained(model_dict["full_name"])
+    # Codeparrot is an exception
+    if model_name == 'codeparrot':
+        model_tf = model_dict["constructor_tf"].from_pretrained(model_dict["full_name"], from_pt=True)
+    else:
+        model_tf = model_dict["constructor_tf"].from_pretrained(model_dict["full_name"])
+    # Initialize tokenizer
+    tokenizer = model_dict["constructor_tokenizer"].from_pretrained(model_dict["full_name"])
     # Save baseline
     model_torch.save_pretrained(f"{model_name}-torch-baseline")
     model_tf.save_pretrained(f"{model_name}-tf-baseline")
 
     # PRUNING
+    print(f"Pruning {model_name}")
     for cf in pruning_cf:
-        # Loop to get 30 emissions measurements
-        for i in range(30):
+        # Loop to get emissions measurements
+        for i in range(number_of_measurements):
+            print(f"Torch pruning: {model_name} with coefficient {cf}. Iteration: {i}")
+            model_torch = model_dict["constructor_torch"].from_pretrained(f"{model_name}-torch-baseline")
             prune_torch(model_torch, model_name, cf)
-        # Loop to get 30 emissions measurements
-        for i in range(30):
+        # Loop to get emissions measurements
+        for i in range(number_of_measurements):
+            print(f"TF pruning: {model_name} with coefficient {cf}. Iteration: {i}")
+            if model_name == 'codeparrot':
+                model_tf = model_dict["constructor_tf"].from_pretrained(f"{model_name}-tf-baseline", from_pt=True)
+            else:
+                model_tf = model_dict["constructor_tf"].from_pretrained(f"{model_name}-tf-baseline")
             prune_tf(model_tf, model_name, cf)
 
     # QUANTIZATION
-    for i in range(30):
+    print(f"Quantization for {model_name}")
+    # Loop to get emissions measurements
+    for i in range(number_of_measurements):
+        print(f"Torch quantization: {model_name}. Iteration: {i}")
+        model_torch = model_dict["constructor_torch"].from_pretrained(f"{model_name}-torch-baseline")
         quantize_torch(model_torch, model_name)
 
-    for i in range(30):
+    # Loop to get emissions measurements
+    for i in range(number_of_measurements):
+        print(f"TF quantization: {model_name}. Iteration: {i}")
+        if model_name == 'codeparrot':
+            model_tf = model_dict["constructor_tf"].from_pretrained(f"{model_name}-tf-baseline", from_pt=True)
+        else:
+            model_tf = model_dict["constructor_tf"].from_pretrained(f"{model_name}-tf-baseline")
         quantize_tf(model_tf, model_name)
 
     # Optionally, you can reload the original model from disk
