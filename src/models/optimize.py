@@ -96,78 +96,76 @@ models = [
 number_of_measurements = 1
 pruning_cf = [0.2, 0.5, 0.8]
 
-# Loop over the models and the coefficients and prune each model
-for model_dict in models:
-    # Get model name
-    model_name = model_dict["name"]
-    if model_name != 't5':
-        continue
-    # Initialize models
-    model_torch = model_dict["constructor_torch"].from_pretrained(model_dict["full_name"])
-    # Codeparrot is an exception
-    if model_name == 'codeparrot':
-        model_tf = model_dict["constructor_tf"].from_pretrained(model_dict["full_name"], from_pt=True)
-    else:
-        model_tf = model_dict["constructor_tf"].from_pretrained(model_dict["full_name"])
-    # Initialize tokenizer
-    tokenizer = model_dict["constructor_tokenizer"].from_pretrained(model_dict["full_name"])
-    # Save baseline
-    model_torch.save_pretrained(f"saved/{model_name}-torch-baseline")
-    model_tf.save_pretrained(f"saved/{model_name}-tf-baseline")
 
-    # PRUNING
-    print("#############################################################################################")
-    print("#############################################################################################")
-    print(f"Pruning {model_name}")
-    print("#############################################################################################")
-    print("#############################################################################################")
-    for cf in pruning_cf:
+def optimize():
+    # Loop over the models and the coefficients and prune each model
+    for model_dict in models:
+        # Get model name
+        model_name = model_dict["name"]
+        if model_name != 't5':
+            continue
+        # Initialize models
+        model_torch = model_dict["constructor_torch"].from_pretrained(model_dict["full_name"])
+        # Codeparrot is an exception
+        if model_name == 'codeparrot':
+            model_tf = model_dict["constructor_tf"].from_pretrained(model_dict["full_name"], from_pt=True)
+        else:
+            model_tf = model_dict["constructor_tf"].from_pretrained(model_dict["full_name"])
+        # Save baseline
+        model_torch.save_pretrained(f"saved/{model_name}-torch-baseline")
+        model_tf.save_pretrained(f"saved/{model_name}-tf-baseline")
+
+        # PRUNING
+        print("#############################################################################################")
+        print("#############################################################################################")
+        print(f"Pruning {model_name}")
+        print("#############################################################################################")
+        print("#############################################################################################")
+        for cf in pruning_cf:
+            # Loop to get emissions measurements
+            for i in range(number_of_measurements):
+                print("#############################################################################################")
+                print(f"Torch pruning: {model_name} with coefficient {cf}. Iteration: {i}")
+                print("#############################################################################################")
+                model_torch = model_dict["constructor_torch"].from_pretrained(f"saved/{model_name}-torch-baseline")
+                prune_torch(model_torch, model_name, cf)
+            # Loop to get emissions measurements
+            for i in range(number_of_measurements):
+                print("#############################################################################################")
+                print(f"TF pruning: {model_name} with coefficient {cf}. Iteration: {i}")
+                print("#############################################################################################")
+                if model_name == 'codeparrot':
+                    model_tf = model_dict["constructor_tf"].from_pretrained(f"saved/{model_name}-tf-baseline",
+                                                                            from_pt=True)
+                else:
+                    model_tf = model_dict["constructor_tf"].from_pretrained(f"saved/{model_name}-tf-baseline")
+                prune_tf(model_tf, model_name, cf)
+
+        # QUANTIZATION
+        print("#############################################################################################")
+        print("#############################################################################################")
+        print(f"Quantization for {model_name}")
+        print("#############################################################################################")
+        print("#############################################################################################")
         # Loop to get emissions measurements
         for i in range(number_of_measurements):
             print("#############################################################################################")
-            print(f"Torch pruning: {model_name} with coefficient {cf}. Iteration: {i}")
+            print(f"Torch quantization: {model_name}. Iteration: {i}")
             print("#############################################################################################")
             model_torch = model_dict["constructor_torch"].from_pretrained(f"saved/{model_name}-torch-baseline")
-            prune_torch(model_torch, model_name, cf)
+            quantize_torch(model_torch, model_name)
+
         # Loop to get emissions measurements
         for i in range(number_of_measurements):
             print("#############################################################################################")
-            print(f"TF pruning: {model_name} with coefficient {cf}. Iteration: {i}")
+            print(f"TF quantization: {model_name}. Iteration: {i}")
             print("#############################################################################################")
             if model_name == 'codeparrot':
                 model_tf = model_dict["constructor_tf"].from_pretrained(f"saved/{model_name}-tf-baseline", from_pt=True)
             else:
                 model_tf = model_dict["constructor_tf"].from_pretrained(f"saved/{model_name}-tf-baseline")
-            prune_tf(model_tf, model_name, cf)
+            quantize_tf(model_tf, model_name)
 
-    # QUANTIZATION
-    print("#############################################################################################")
-    print("#############################################################################################")
-    print(f"Quantization for {model_name}")
-    print("#############################################################################################")
-    print("#############################################################################################")
-    # Loop to get emissions measurements
-    for i in range(number_of_measurements):
-        print("#############################################################################################")
-        print(f"Torch quantization: {model_name}. Iteration: {i}")
-        print("#############################################################################################")
-        model_torch = model_dict["constructor_torch"].from_pretrained(f"saved/{model_name}-torch-baseline")
-        quantize_torch(model_torch, model_name)
-
-    # Loop to get emissions measurements
-    for i in range(number_of_measurements):
-        print("#############################################################################################")
-        print(f"TF quantization: {model_name}. Iteration: {i}")
-        print("#############################################################################################")
-        if model_name == 'codeparrot':
-            model_tf = model_dict["constructor_tf"].from_pretrained(f"saved/{model_name}-tf-baseline", from_pt=True)
-        else:
-            model_tf = model_dict["constructor_tf"].from_pretrained(f"saved/{model_name}-tf-baseline")
-        quantize_tf(model_tf, model_name)
-
-    # Optionally, you can reload the original model from disk
-    # model_dict["model"] = model.from_pretrained(f"{model_name}-{method_name}-pruned-{pruning_cf[0]}")
-    # model_dict["tokenizer"] = tokenizer.from_pretrained(f"{model_name}-{method_name}-pruned-{pruning_cf[0]}")
 
 """
 def prune_t5(prune_pct):

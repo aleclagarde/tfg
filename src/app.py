@@ -6,11 +6,17 @@ from pydantic import BaseModel
 from fastapi.responses import FileResponse
 from transformers import T5ForConditionalGeneration, TFT5ForConditionalGeneration
 
+from models.optimize import optimize
 from models.inference.t5 import infer_t5
 
 import os
 
 app = FastAPI()
+
+
+@app.post("/models/saved")
+def optimize_models():
+    optimize()
 
 
 class Input(BaseModel):

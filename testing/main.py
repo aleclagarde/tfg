@@ -72,6 +72,12 @@ class MakeApiCall:
 
         return requests_latency
 
+    def optimize_models(self, api):
+        url = api + '/models/saved'
+        response = requests.post(url)
+        if response.status_code == 200:
+            print("Successfully optimized the models")
+
     def __init__(self):
 
         with open("sentences.txt") as my_file:
@@ -84,6 +90,7 @@ class MakeApiCall:
             ["", "azure"],
         ]
         for provider in providers:
+            self.optimize_models(provider[0])
             for model in models:
                 print(f"Requesting provider: {provider[1]} with model: {model.split('/')[1]}")
                 latencies = self.make_requests(provider[0], model, sentences_to_post)
