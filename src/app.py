@@ -1,4 +1,7 @@
 from fastapi import FastAPI
+import torch
+import tensorflow as tf
+import pickle
 from pydantic import BaseModel
 from fastapi.responses import FileResponse
 from transformers import T5ForConditionalGeneration, TFT5ForConditionalGeneration
@@ -22,11 +25,24 @@ def invoke(inp: Input):
     input_dict = inp.dict()
     print(input_dict["language"])
     text = input_dict["language"] + " : " + input_dict["text"]
+
+    # Load model
     if 'torch' in input_dict['model']:
-        model = T5ForConditionalGeneration.from_pretrained(input_dict["model"])
+        if 'quantized' in input_dict['model']:
+            model = T5ForConditionalGeneration()
+            state_dict = torch.load(input_dict['model'])
+            model.load_state_dict(state_dict=state_dict)
+        else:
+            model = T5ForConditionalGeneration.from_pretrained(input_dict["model"])
         framework = 'torch'
     else:
-        model = TFT5ForConditionalGeneration.from_pretrained(input_dict["model"])
+        if 'quantized' in input_dict['model']:
+            with open(input_dict['model'], "rb") as f:
+                state_dict = pickle.load(f)
+            model = tf.lite.Interpreter(model_content=state_dict)
+            model.allocate_tensors()
+        else:
+            model = TFT5ForConditionalGeneration.from_pretrained(input_dict["model"])
         framework = 'tf'
 
     # Translate text

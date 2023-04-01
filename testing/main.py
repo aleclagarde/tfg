@@ -5,9 +5,10 @@ import numpy
 
 RESULTS_PATH = "results"
 
-models = ['models/t5-torch-baseline', 'models/t5-torch-pruned-0.2', 'models/t5-torch-pruned-0.5',
-          'models/t5-torch-pruned-0.8', 'models/t5-tf-baseline', 'models/t5-tf-pruned-0.2', 'models/t5-tf-pruned-0.5',
-          'models/t5-tf-pruned-0.8']
+models = ['models/saved/t5-torch-baseline', 'models/saved/t5-torch-pruned-0.2', 'models/saved/t5-torch-pruned-0.5',
+          'models/saved/t5-torch-pruned-0.8', 'models/saved/t5-tf-baseline', 'models/saved/t5-tf-pruned-0.2',
+          'models/saved/t5-tf-pruned-0.5', 'models/saved/t5-tf-pruned-0.8', 'models/saved/t5-torch-quantized.pth',
+          'models/saved/t5-tf-quantized.pkl']
 
 """
 import subprocess
