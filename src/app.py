@@ -6,7 +6,7 @@ from pydantic import BaseModel
 from fastapi.responses import FileResponse
 from transformers import T5ForConditionalGeneration, TFT5ForConditionalGeneration
 
-from models.t5 import infer_t5
+from models.inference.t5 import infer_t5
 
 import os
 
