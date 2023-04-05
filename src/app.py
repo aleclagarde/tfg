@@ -4,7 +4,7 @@ import tensorflow as tf
 import pickle
 from pydantic import BaseModel
 from fastapi.responses import FileResponse
-from transformers import T5ForConditionalGeneration, TFT5ForConditionalGeneration
+from transformers import T5ForConditionalGeneration, TFT5ForConditionalGeneration, T5Config
 
 from models.optimize import optimize
 from models.inference.t5 import infer_t5
@@ -12,11 +12,6 @@ from models.inference.t5 import infer_t5
 import os
 
 app = FastAPI()
-
-
-@app.post("/models/saved")
-def optimize_models():
-    optimize()
 
 
 class Input(BaseModel):
@@ -29,18 +24,23 @@ class Input(BaseModel):
 @app.post("/invocations")
 def invoke(inp: Input):
     input_dict = inp.dict()
-    print(input_dict["language"])
+    print(input_dict['model'], input_dict["language"])
     text = input_dict["language"] + " : " + input_dict["text"]
 
     # Load model
     if 'torch' in input_dict['model']:
         if 'quantized' in input_dict['model']:
-            model = T5ForConditionalGeneration()
+            config = T5Config.from_pretrained('t5-base')
+
+            # Create an instance of T5ForConditionalGeneration using the configuration object
+            model = T5ForConditionalGeneration(config)
+
+            # Load the model weights from a checkpoint
             state_dict = torch.load(input_dict['model'])
-            model.load_state_dict(state_dict=state_dict)
+            model.load_state_dict(state_dict)
         else:
             model = T5ForConditionalGeneration.from_pretrained(input_dict["model"])
-        framework = 'torch'
+        framework = 'pt'
     else:
         if 'quantized' in input_dict['model']:
             with open(input_dict['model'], "rb") as f:
