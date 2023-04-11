@@ -77,9 +77,9 @@ class MakeApiCall:
 
     def __init__(self):
 
-        with open("sentences.txt") as my_file:
+        with open("../src/data/sentences.txt") as my_file:
             sentences_to_post = my_file.read().splitlines()
-        with open("target_sentences.txt") as my_file:
+        with open("../src/data/target_sentences.txt") as my_file:
             target_sentences = my_file.read().splitlines()
 
         providers = [

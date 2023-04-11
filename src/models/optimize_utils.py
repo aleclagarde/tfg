@@ -18,7 +18,7 @@ def prune_torch(model, model_name: str, cf: float):
             torch.nn.utils.prune.random_unstructured(module, name='weight', amount=cf)
 
     # Save the pruned model to disk
-    model.save_pretrained(f"models/saved/{model_name}-torch-pruned-{cf}")
+    model.save_pretrained(f"models/saved/{model_name}-torch-pruned")
 
 
 @track_emissions
@@ -37,7 +37,7 @@ def prune_tf(model, model_name: str, cf: float):
                   metrics=['accuracy'])
 
     # Save the pruned model to disk
-    model.save_pretrained(f"models/saved/{model_name}-tf-pruned-{cf}")
+    model.save_pretrained(f"models/saved/{model_name}-tf-pruned")
 
 
 @track_emissions
