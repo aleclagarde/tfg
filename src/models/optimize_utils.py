@@ -18,7 +18,7 @@ def prune_torch(model, model_name: str, cf: float):
             torch.nn.utils.prune.random_unstructured(module, name='weight', amount=cf)
 
     # Save the pruned model to disk
-    model.save_pretrained(f"models/saved/{model_name}-torch-pruned")
+    model.save_pretrained(f"saved/{model_name}-torch-pruned")
 
 
 @track_emissions
@@ -37,7 +37,7 @@ def prune_tf(model, model_name: str, cf: float):
                   metrics=['accuracy'])
 
     # Save the pruned model to disk
-    model.save_pretrained(f"models/saved/{model_name}-tf-pruned")
+    model.save_pretrained(f"saved/{model_name}-tf-pruned")
 
 
 @track_emissions
@@ -51,7 +51,7 @@ def quantize_torch(model, model_name):
 
     # Save the state dictionary of the quantized model to disk
     # Can't use save_pretrained with quantized models, use torch.jit.load() to load the quantized model
-    torch.save(quantized_model.state_dict(), f"models/saved/{model_name}-torch-quantized.pth")
+    torch.save(quantized_model.state_dict(), f"saved/{model_name}-torch-quantized.pth")
 
 
 """
@@ -77,7 +77,7 @@ def quantize_tf(model, model_name):
     tflite_model = converter.convert()
 
     # Save the state dictionary of the quantized model to disk
-    with open(f"models/saved/{model_name}-tf-quantized.pkl", "wb") as f:
+    with open(f"saved/{model_name}-tf-quantized.pkl", "wb") as f:
         pickle.dump(tflite_model, f)
 
 

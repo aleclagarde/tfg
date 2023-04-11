@@ -7,8 +7,8 @@ from transformers import T5ForConditionalGeneration, TFT5ForConditionalGeneratio
 from models.inference.t5 import infer_t5
 
 
-models = ['models/saved/t5-torch-baseline', 'models/saved/t5-torch-pruned-0.2', 'models/saved/t5-tf-baseline',
-          'models/saved/t5-tf-pruned-0.2', 'models/saved/t5-torch-quantized.pth', 'models/saved/t5-tf-quantized.pkl']
+models = ['models/saved/t5-torch-baseline', 'models/saved/t5-torch-pruned', 'models/saved/t5-tf-baseline',
+          'models/saved/t5-tf-pruned', 'models/saved/t5-torch-quantized.pth', 'models/saved/t5-tf-quantized.pkl']
 
 
 def load_model(model_name):
