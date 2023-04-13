@@ -1,3 +1,4 @@
+import pandas as pd
 from transformers import (
     BertTokenizer,
     BertModel,
@@ -23,7 +24,8 @@ from transformers import (
     AutoModelForMaskedLM,
     TFAutoModelForMaskedLM,
 )
-from optimize_utils import prune_torch, prune_tf, quantize_torch, quantize_tf
+import os
+from optimize_utils import prune_torch, prune_tf, quantize_torch, quantize_tf, add_measurements
 
 # Define the models constructors and their associated tokenizers
 models = [
@@ -92,9 +94,14 @@ models = [
     },
 ]
 
-
 number_of_measurements = 1
 pruning_cf = 0.2
+
+df = pd.DataFrame(columns=['timestamp', 'project_name', 'run_id', 'duration', 'emissions', 'emissions_rate',
+                           'cpu_power', 'gpu_power', 'ram_power', 'cpu_energy', 'gpu_energy', 'ram_energy',
+                           'energy_consumed', 'country_name', 'country_iso_code', 'region', 'cloud_provider',
+                           'cloud_region', 'os', 'python_version', 'cpu_count', 'cpu_model', 'gpu_count', 'gpu_model',
+                           'longitude', 'latitude', 'ram_total_size', 'tracking_mode', 'on_cloud', 'information'])
 
 
 # Loop over the models and the coefficients and prune each model
@@ -120,15 +127,16 @@ for model_dict in models:
     print(f"Pruning {model_name}")
     print("#############################################################################################")
     print("#############################################################################################")
-
-    # Loop to get emissions measurements
+    # PyTorch
     for i in range(number_of_measurements):
         print("#############################################################################################")
         print(f"Torch pruning: {model_name} with coefficient {pruning_cf}. Iteration: {i}")
         print("#############################################################################################")
         model_torch = model_dict["constructor_torch"].from_pretrained(f"saved/{model_name}-torch-baseline")
         prune_torch(model_torch, model_name, pruning_cf)
-    # Loop to get emissions measurements
+    df = add_measurements(df, number_of_measurements, f'{model_name}-torch-pruning')
+
+    # Tensorflow
     for i in range(number_of_measurements):
         print("#############################################################################################")
         print(f"TF pruning: {model_name} with coefficient {pruning_cf}. Iteration: {i}")
@@ -139,6 +147,7 @@ for model_dict in models:
         else:
             model_tf = model_dict["constructor_tf"].from_pretrained(f"saved/{model_name}-tf-baseline")
         prune_tf(model_tf, model_name, pruning_cf)
+    df = add_measurements(df, number_of_measurements, f'{model_name}-tf-pruning')
 
     # QUANTIZATION
     print("#############################################################################################")
@@ -146,15 +155,16 @@ for model_dict in models:
     print(f"Quantization for {model_name}")
     print("#############################################################################################")
     print("#############################################################################################")
-    # Loop to get emissions measurements
+    # PyTorch
     for i in range(number_of_measurements):
         print("#############################################################################################")
         print(f"Torch quantization: {model_name}. Iteration: {i}")
         print("#############################################################################################")
         model_torch = model_dict["constructor_torch"].from_pretrained(f"saved/{model_name}-torch-baseline")
         quantize_torch(model_torch, model_name)
+    df = add_measurements(df, number_of_measurements, f'{model_name}-torch-quantization')
 
-    # Loop to get emissions measurements
+    # Tensorflow
     for i in range(number_of_measurements):
         print("#############################################################################################")
         print(f"TF quantization: {model_name}. Iteration: {i}")
@@ -165,9 +175,15 @@ for model_dict in models:
         else:
             model_tf = model_dict["constructor_tf"].from_pretrained(f"saved/{model_name}-tf-baseline")
         quantize_tf(model_tf, model_name)
+    df = add_measurements(df, number_of_measurements, f'{model_name}-tf-quantization')
+
+df.to_csv('optimization_results.csv')
+
+# Remove the emissions file
+os.remove('emissions.csv')
 
 
-"""
+"""-
 def prune_t5(prune_pct):
     # Prune the model
     if prune_pct > 0:

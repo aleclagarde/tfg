@@ -3,19 +3,16 @@ import torch
 from torch.nn.utils import prune
 import tensorflow as tf
 import tensorflow_model_optimization as tfmot
+import pandas as pd
 from codecarbon import track_emissions
 import pickle
 
 
 @track_emissions
 def prune_torch(model, model_name: str, cf: float):
-    # Get a list of all the modules in the model
-    modules = list(model.modules())
-    for module in modules:
-        # Loop through each module and prune its parameters
-        if isinstance(module, torch.nn.Linear) or \
-                isinstance(module, transformers.pytorch_utils.Conv1D):
-            torch.nn.utils.prune.random_unstructured(module, name='weight', amount=cf)
+    for name, param in model.named_parameters():
+        if "embedding" in name:
+            torch.nn.utils.prune.random_unstructured(param, name='weight', amount=cf)
 
     # Save the pruned model to disk
     model.save_pretrained(f"saved/{model_name}-torch-pruned")
@@ -89,3 +86,9 @@ with open(f"{model_name}-tf-quantized.pkl", "rb") as f:
 quantized_model = tf.lite.Interpreter(model_content=state_dict)
 quantized_model.allocate_tensors()
 """
+
+
+def add_measurements(df, number_of_measurements, information):
+    new_measurements = pd.read_csv('emissions.csv').tail(number_of_measurements)
+    new_measurements['information'] = information
+    return pd.concat([df, new_measurements], axis=0)
