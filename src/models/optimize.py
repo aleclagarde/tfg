@@ -25,7 +25,7 @@ from transformers import (
     TFAutoModelForMaskedLM,
 )
 import os
-from optimize_utils import prune_torch, prune_tf, quantize_torch, quantize_tf, add_measurements
+from optimize_utils import prune_torch, prune_tf, quantize_torch, quantize_tf, add_measurements, convert_tflite_to_tf
 
 # Define the models constructors and their associated tokenizers
 models = [
@@ -130,7 +130,7 @@ for model_dict in models:
     # PyTorch
     for i in range(number_of_measurements):
         print("#############################################################################################")
-        print(f"Torch pruning: {model_name} with coefficient {pruning_cf}. Iteration: {i}")
+        print(f"Torch pruning: {model_name} with coefficient {pruning_cf}. Iteration: {i+1}")
         print("#############################################################################################")
         model_torch = model_dict["constructor_torch"].from_pretrained(f"saved/{model_name}-torch-baseline")
         prune_torch(model_torch, model_name, pruning_cf)
@@ -139,7 +139,7 @@ for model_dict in models:
     # Tensorflow
     for i in range(number_of_measurements):
         print("#############################################################################################")
-        print(f"TF pruning: {model_name} with coefficient {pruning_cf}. Iteration: {i}")
+        print(f"TF pruning: {model_name} with coefficient {pruning_cf}. Iteration: {i+1}")
         print("#############################################################################################")
         if model_name == 'codeparrot':
             model_tf = model_dict["constructor_tf"].from_pretrained(f"saved/{model_name}-tf-baseline",
@@ -158,7 +158,7 @@ for model_dict in models:
     # PyTorch
     for i in range(number_of_measurements):
         print("#############################################################################################")
-        print(f"Torch quantization: {model_name}. Iteration: {i}")
+        print(f"Torch quantization: {model_name}. Iteration: {i+1}")
         print("#############################################################################################")
         model_torch = model_dict["constructor_torch"].from_pretrained(f"saved/{model_name}-torch-baseline")
         quantize_torch(model_torch, model_name)
@@ -167,28 +167,18 @@ for model_dict in models:
     # Tensorflow
     for i in range(number_of_measurements):
         print("#############################################################################################")
-        print(f"TF quantization: {model_name}. Iteration: {i}")
+        print(f"TF quantization: {model_name}. Iteration: {i+1}")
         print("#############################################################################################")
         if model_name == 'codeparrot':
             model_tf = model_dict["constructor_tf"].from_pretrained(f"saved/{model_name}-tf-baseline",
                                                                     from_pt=True)
         else:
             model_tf = model_dict["constructor_tf"].from_pretrained(f"saved/{model_name}-tf-baseline")
-        quantize_tf(model_tf, model_name)
+        tf_quantized_model = quantize_tf(model_tf)
+    convert_tflite_to_tf(tf_quantized_model, model_name)
     df = add_measurements(df, number_of_measurements, f'{model_name}-tf-quantization')
 
 df.to_csv('optimization_results.csv')
 
 # Remove the emissions file
 os.remove('emissions.csv')
-
-
-"""-
-def prune_t5(prune_pct):
-    # Prune the model
-    if prune_pct > 0:
-        for name, param in model.named_parameters():
-            if "embedding" in name:
-                l1_unstructured(param, name='weight', amount=prune_pct)
-    return model
-"""
