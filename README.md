@@ -1,4 +1,4 @@
-# Energy efficiency measurement and optimization of ML models deployment in cloud providers
+# Energy efficiency measurement in optimization and inference of ML models
 
 **Author: Alec Lagarde Teixidó**
 
@@ -6,14 +6,13 @@
 
 **Co-director: Matias Martinez**
 
-The research of this TFG consists of understanding how existing ML inference cloud providers optimize calculations for 
-energy reduction. We will study the following aspects of ML models deployment: 
+The research of this TFG consists of understanding how existing ML optimization frameworks impact the energy efficiency 
+and accuracy of ML models. We will study the following aspects of ML models deployment:
 
-1. Energy consumption measurement after 
-applying model optimization (e.g., quantization, pruning); 
-
-2. Context-aware evaluation of the energy efficiency for 
-diverse cloud providers (e.g., AWS, Azure).
+1. Energy consumption measurement after applying model optimization (e.g., quantization,
+pruning)
+2. Impact regarding the optimization framework (PyTorch and Tensorflow)
+3. Context-aware evaluation of the energy efficiency for diverse ML models.
 
 This project was developed from January to June 2023 as a Bachelor's Degree thesis for the Data Science and Engineering 
 Degree in the Universitat Politècnica de Catalunya.
@@ -32,16 +31,11 @@ Then, run ``conda activate tfg`` to activate the environment.
 
 ## Structure and usage
 
-It is structured in 4 directories:
+It is structured in 3 directories:
 
-1. **src**: performs the actual deployment.
-2. **testing**: performs the inference.
-3. **results**: stores the testing results.
-4. **reports**: analyzes the results.
+1. **src**: performs the optimization and inference of the 9 models.
+2. **results**: stores the testing results.
+3. **reports**: analyzes the results.
 
 Each of these directories, except **results** contains a python script that has to be executed using the environment 
 created with ``environment.yml``.
-
-To do this, a new main script was created in the demo directory to execute everything at once.
-``main.py`` executes all the scripts and accepts the ``--prune_pct`` flag, which is the pruning coefficient, that is the
-percentage of weights to be pruned.

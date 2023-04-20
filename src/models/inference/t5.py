@@ -46,7 +46,6 @@ def infer_t5(model, framework, text, quantized):
 
             return output_text
     else:
-        text = "fr : " + text
         input_ids = tokenizer.encode(text, return_tensors=framework)
         outputs = model.generate(input_ids)
 

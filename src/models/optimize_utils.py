@@ -50,7 +50,7 @@ def prune_torch(model, model_name: str, cf: float):
     """
     for name, module in model.named_modules():
         if isinstance(module, torch.nn.Embedding):
-            torch.nn.utils.prune.random_unstructured(module, name='weight', amount=cf)
+            torch.nn.utils.prune.random_unstructured(module=module, name='weight', amount=cf)
 
     # Save the pruned model to disk
     model.save_pretrained(f"saved/{model_name}-torch-pruned")
@@ -113,7 +113,7 @@ def quantize_tf(model):
     :return: TFLite quantized model.
     """
     # Convert the model to TensorFlow Lite format
-    converter = tf.lite.TFLiteConverter.from_keras_model(model)
+    converter = tf.lite.TFLiteConverter.from_keras_model(model=model)
     converter.target_spec.supported_ops = [
         tf.lite.OpsSet.TFLITE_BUILTINS,
         tf.lite.OpsSet.SELECT_TF_OPS
@@ -149,14 +149,14 @@ def convert_tflite_to_tf(model, model_name: str):
         shape = input_detail['shape']
         dtype = input_detail['dtype']
         input_layer = tf.keras.layers.Input(shape=shape[1:], dtype=dtype)
-        tf_model.add(input_layer)
+        tf_model.add(layer=input_layer)
 
     # Iterate through the output details and add output layers to the model
     for output_detail in output_details:
         shape = output_detail['shape']
         dtype = output_detail['dtype']
         output_layer = tf.keras.layers.Input(shape=shape[1:], dtype=dtype)
-        tf_model.add(output_layer)
+        tf_model.add(layer=output_layer)
 
     # Save the TensorFlow model to disk
     tf.keras.models.save_model(tf_model, f"saved/{model_name}-tf-quantized")
@@ -176,7 +176,7 @@ def add_measurements(dataframe: pd.DataFrame, number_of_measurements: int, model
     :param strategy: String to store in the new rows' strategy column.
     :return: Pandas DataFrame with the added measurements.
     """
-    new_measurements = pd.read_csv('emissions.csv').tail(number_of_measurements)
+    new_measurements = pd.read_csv(filepath_or_buffer='emissions.csv').tail(n=number_of_measurements)
 
     if model_name in ['bert', 'gpt2', 't5']:
         domain = 'NLP'
