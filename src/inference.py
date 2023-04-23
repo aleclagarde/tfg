@@ -1,11 +1,11 @@
 import pandas as pd
 import os
 
-from inference_functions import t5
+from inference_functions import bert, t5
 from inference_utils import load_model
 
 
-models = ['t5']
+models = ['bert', 't5']
 data_size = 1
 
 df = pd.DataFrame(columns=['timestamp', 'project_name', 'run_id', 'duration', 'emissions', 'emissions_rate',
@@ -28,9 +28,9 @@ for model_short_name in models:
         model, framework = load_model(model_short_name, 'models/saved/'+model_name)
 
         if model_short_name == 'bert':
-            continue
+            bert(data_size)
         elif model_short_name == 't5':
-            t5(model_name=model_name, model=model, framework=framework, data_size=data_size, df=df)
+            df = t5(model_name=model_name, model=model, framework=framework, data_size=data_size, df=df)
 
 
 df.to_csv('inference_results.csv')

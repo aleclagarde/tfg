@@ -6,13 +6,16 @@ from transformers import T5Tokenizer
 from codecarbon import track_emissions
 from inference_utils import add_measurements
 import time
+import itertools
 
 tokenizer = T5Tokenizer.from_pretrained("t5-base")
 
 
 def bert(data_size):
-    bert_dataset = load_dataset("openwebtext", split='test').select(range(data_size))
-    print(bert_dataset)
+    bert_dataset = load_dataset("bertin-project/mc4-es-sampled", 'gaussian', split="validation", streaming=True)
+    bert_dataset = itertools.islice(bert_dataset, data_size)
+    for text in bert_dataset:
+        print(text)
 
 
 @track_emissions
@@ -40,18 +43,15 @@ def infer_t5(model, framework, text, quantized):
 
             return output_text
         else:
+
             # Encode the input text using the tokenizer
             input_ids = tokenizer.encode(text, return_tensors='tf')
-            input_ids = input_ids.numpy()
 
-            # Perform inference on the Sequential model
-            output_ids = model.predict(input_ids)
-
-            # Convert output_ids to a tf.Tensor
-            output_ids = tf.constant(output_ids)[0]
+            # Generate translations using the T5 model
+            outputs = model(inputs=input_ids, training=False)
 
             # Decode the output text using the tokenizer
-            output_text = tokenizer.decode(output_ids, skip_special_tokens=True)
+            output_text = tokenizer.decode(outputs[0], skip_special_tokens=True)
 
             return output_text
     else:
@@ -64,7 +64,8 @@ def infer_t5(model, framework, text, quantized):
 
 
 def t5(model_name: str, model, framework: str, data_size: int, df: pd.DataFrame):
-    t5_dataset = load_dataset("wmt16", "de-en", split="test").select(range(data_size))
+    t5_dataset = load_dataset("opus100", "de-en", split="test", streaming=True)
+    t5_dataset = itertools.islice(t5_dataset, data_size)
 
     i = 0
     for data in t5_dataset:
@@ -84,3 +85,5 @@ def t5(model_name: str, model, framework: str, data_size: int, df: pd.DataFrame)
         correct = output == target
         df = add_measurements(df, number_of_measurements=1, model_name=model_name, data_number=i + 1, correct=correct)
         i = i + 1
+
+    return df
