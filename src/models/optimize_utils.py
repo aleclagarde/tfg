@@ -50,7 +50,7 @@ def prune_torch(model, model_name: str, cf: float):
     """
     for name, module in model.named_modules():
         if isinstance(module, torch.nn.Embedding):
-            torch.nn.utils.prune.random_unstructured(module=module, name='weight', amount=cf)
+            torch.nn.utils.prune.l1_unstructured(module=module, name='weight', amount=cf)
 
     # Save the pruned model to disk
     model.save_pretrained(f"saved/{model_name}-torch-pruned")
