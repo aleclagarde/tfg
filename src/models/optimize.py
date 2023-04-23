@@ -26,7 +26,7 @@ from get_model_objects import get_model_objects
 models = ['bert', 'gpt2', 't5', 'vit', 'clip', 'segformer', 'codeparrot', 'codeberta', 'codegpt']
 new_measurements_table = True
 
-number_of_measurements = 1
+number_of_measurements = 30
 pruning_cf = 0.2
 
 if new_measurements_table:
