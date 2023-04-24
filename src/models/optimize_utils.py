@@ -49,8 +49,8 @@ def prune_torch(model, model_name: str, cf: float):
     :param cf: Pruning coefficient.
     """
     for name, module in model.named_modules():
-        if isinstance(module, torch.nn.Embedding):
-            torch.nn.utils.prune.l1_unstructured(module=module, name='weight', amount=cf)
+        if isinstance(module, torch.nn.Linear) and "weight" in name:
+            prune.l1_unstructured(module, name='weight', amount=cf)
 
     # Save the pruned model to disk
     model.save_pretrained(f"saved/{model_name}-torch-pruned")
@@ -181,9 +181,9 @@ def add_measurements(dataframe: pd.DataFrame, number_of_measurements: int, model
     if model_name in ['bert', 'gpt2', 't5']:
         domain = 'NLP'
     elif model_name in ['vit', 'clip', 'segformer']:
-        domain = 'Computer Vision'
+        domain = 'CV'
     else:
-        domain = 'Code'
+        domain = 'CG'
 
     new_measurements['domain'] = domain
     new_measurements['model'] = model_name
