@@ -4,8 +4,8 @@ from transformers import (
     BertModel,
     TFBertModel,
     GPT2Tokenizer,
-    GPT2Model,
-    TFGPT2Model,
+    GPT2LMHeadModel,
+    TFGPT2LMHeadModel,
     T5Tokenizer,
     T5ForConditionalGeneration,
     TFT5ForConditionalGeneration,
@@ -36,8 +36,8 @@ models = {
     "gpt2": {
         "full_name": "gpt2",
         "constructor_tokenizer": GPT2Tokenizer,
-        "constructor_torch": GPT2Model,
-        "constructor_tf": TFGPT2Model,
+        "constructor_torch": GPT2LMHeadModel,
+        "constructor_tf": TFGPT2LMHeadModel,
     },
     "t5": {
         "full_name": "t5-base",
@@ -78,8 +78,8 @@ models = {
     "codegpt": {
         "full_name": "microsoft/CodeGPT-small-py",
         "constructor_tokenizer": GPT2Tokenizer,
-        "constructor_torch": GPT2Model,
-        "constructor_tf": TFGPT2Model,
+        "constructor_torch": GPT2LMHeadModel,
+        "constructor_tf": TFGPT2LMHeadModel,
     }
 }
 

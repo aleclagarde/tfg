@@ -58,7 +58,7 @@ def load_model(model_short_name: str, path: str):
     """
     This function loads the corresponding model and returns it along with the framework identifier.
 
-    :param model_name: Name of the model to load.
+    :param model_short_name: Name of the model to load.
     :param path: Path of the model to load.
     :return: Loaded model and framework identifier.
     """
