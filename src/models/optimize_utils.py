@@ -66,14 +66,28 @@ def prune_tf(model, model_name: str, cf: float):
     :param model_name: Short model name (eg. 't5').
     :param cf: Pruning coefficient.
     """
-    # Get a list of all the modules in the model
-    submodules = model.submodules  # Access the submodules tuple as an attribute
-    modules = list(submodules)  # Convert the submodules tuple to a list
-    # Loop through each module and prune its parameters
-    for module in modules:
-        if isinstance(module, tf.keras.models.Sequential):
-            # Prune the model with the given coefficient
-            tfmot.sparsity.keras.prune_low_magnitude(model, sparsity=cf)
+    # Define the pruning parameters
+    pruning_params = {
+        'pruning_schedule': tfmot.sparsity.keras.ConstantSparsity(target_sparsity=cf, begin_step=0, end_step=-1,
+                                                                  frequency=100),
+        'block_size': (1, 1)
+    }
+
+    # Loop through the model's submodules and prune its parameters
+    for submodule in model.submodules:
+        if 'mlp' in submodule.name:
+            # Create a custom PrunableLayer for the unsupported layer
+            class PrunableLayer(tf.keras.layers.Layer, tfmot.sparsity.keras.PrunableLayer):
+                def __init__(self, layer):
+                    super(PrunableLayer, self).__init__()
+                    self.layer = layer
+
+                def get_prunable_weights(self):
+                    return self.layer.trainable_weights
+
+            # Prune the custom PrunableLayer
+            prunable_layer = PrunableLayer(submodule)
+            tfmot.sparsity.keras.prune_low_magnitude(prunable_layer, **pruning_params)
 
     # `prune_low_magnitude` requires a recompile.
     model.compile(optimizer='adam', loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
@@ -99,7 +113,7 @@ def quantize_torch(model, model_name: str):
         dtype=torch.qint8
     )
 
-    # Save the quantized model's JIT script module and state dictionary together using torch.jit.save
+    # Save the quantized model
     torch.save(quantized_model, f"saved/{model_name}-torch-quantized.pth")
 
 
@@ -114,19 +128,15 @@ def quantize_tf(model):
     """
     # Convert the model to TensorFlow Lite format
     converter = tf.lite.TFLiteConverter.from_keras_model(model=model)
-    converter.target_spec.supported_ops = [
-        tf.lite.OpsSet.TFLITE_BUILTINS,
-        tf.lite.OpsSet.SELECT_TF_OPS
-    ]
 
-    # Optimize the model
+    # Convert to TF Lite with quantization
     converter.optimizations = [tf.lite.Optimize.DEFAULT]
     tflite_model = converter.convert()
 
     return tflite_model
 
 
-def convert_tflite_to_tf(model, model_name: str):
+def tflite_to_keras(model, model_name: str):
     """
     This function converts the quantized TFLite model into a TensorFlow model to perform inference and saves it in disk.
 
@@ -157,6 +167,8 @@ def convert_tflite_to_tf(model, model_name: str):
         dtype = output_detail['dtype']
         output_layer = tf.keras.layers.Input(shape=shape[1:], dtype=dtype)
         tf_model.add(layer=output_layer)
+
+    tf_model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
     # Save the TensorFlow model to disk
     tf.keras.models.save_model(tf_model, f"saved/{model_name}-tf-quantized")
