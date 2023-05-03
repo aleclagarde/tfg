@@ -18,7 +18,6 @@ This script contains auxiliary functions for the inference part of the project..
 """
 
 import pandas as pd
-import numpy as np
 import torch
 import tensorflow as tf
 
