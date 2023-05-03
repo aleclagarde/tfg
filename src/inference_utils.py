@@ -18,24 +18,23 @@ This script contains auxiliary functions for the inference part of the project..
 """
 
 import pandas as pd
+import numpy as np
 import torch
 import tensorflow as tf
 
 from models.get_model_objects import get_model_objects
 
 
-def add_measurements(dataframe: pd.DataFrame, number_of_measurements: int, model_name: str, data_number: int,
-                     correct: bool) -> pd.DataFrame:
+def add_measurements(dataframe: pd.DataFrame, number_of_measurements: int, model_name: str, iteration: int,
+                     correctness) -> pd.DataFrame:
     """
-    This function takes a Pandas DataFrame and adds *number_of_measurements* rows with the string *information* in the
-    'information' column, along with the measurement number in the 'iteration' column. This is used to add emissions
-    measurements to the results table.
+    This function takes a Pandas DataFrame and adds *number_of_measurements* rows with metrics that we want to analyse.
 
     :param dataframe: Pandas DataFrame to add rows.
     :param number_of_measurements: Number of measurements (rows) to add.
     :param model_name: String to store in the new rows' model column. It is also used to get the domain.
-    :param data_number: Integer to store in the new rows' data_number column.
-    :param correct: Whether the output is correct or not.
+    :param iteration: Integer to store in the new rows' iteration column.
+    :param correctness: Whether the output is correct or not.
     :return: Pandas DataFrame with the added measurements.
     """
     new_measurements = pd.read_csv(filepath_or_buffer='emissions.csv').tail(n=number_of_measurements)
@@ -49,8 +48,8 @@ def add_measurements(dataframe: pd.DataFrame, number_of_measurements: int, model
 
     new_measurements['domain'] = domain
     new_measurements['model'] = model_name
-    new_measurements['data_number'] = data_number
-    new_measurements['correct'] = correct
+    new_measurements['iteration'] = iteration
+    new_measurements['correctness'] = correctness
     return pd.concat([dataframe, new_measurements], axis=0)
 
 
