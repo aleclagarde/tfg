@@ -23,9 +23,9 @@ Degree in the Universitat Politècnica de Catalunya.
 To replicate this projects environment, simply run ``conda create --name tfg python=3.10``. This will create the 
 environment (named **tfg**) with Python 3.10.
 
-Once the environment is created, you can install all necessary packages with ``pip install -r requirements.txt``.
-It is necessary to install the packages with pip instead of conda because conda does not work for some packages.
-Then, run ``conda activate tfg`` to activate the environment.
+Once the environment is created, activate the environment with ``conda activate tfg``, after that, you can install all 
+necessary packages with ``pip install -r requirements.txt``. It is necessary to install the packages with pip instead of 
+conda because conda does not work for some packages.
 
 ----------
 
