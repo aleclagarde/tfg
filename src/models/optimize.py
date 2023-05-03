@@ -19,7 +19,7 @@ import os
 import pandas as pd
 
 # Auxiliary functions
-from optimize_utils import prune_torch, prune_tf, quantize_torch, quantize_tf, add_measurements, convert_tflite_to_tf
+from optimize_utils import prune_torch, prune_tf, quantize_torch, quantize_tf, add_measurements, tflite_to_keras
 from get_model_objects import get_model_objects
 
 
@@ -103,7 +103,7 @@ for model_name in models:
         print("#############################################################################################")
         model_tf = model_dict["constructor_tf"].from_pretrained(f"saved/{model_name}-tf-baseline")
         tf_quantized_model = quantize_tf(model=model_tf)
-    convert_tflite_to_tf(model=tf_quantized_model, model_name=model_name)
+    tflite_to_keras(model=tf_quantized_model, model_name=model_name)
     df = add_measurements(dataframe=df, number_of_measurements=number_of_measurements, model_name=model_name,
                           framework='tf', strategy='quantization')
 
