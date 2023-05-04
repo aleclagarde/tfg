@@ -128,6 +128,10 @@ def quantize_tf(model):
     """
     # Convert the model to TensorFlow Lite format
     converter = tf.lite.TFLiteConverter.from_keras_model(model=model)
+    converter.target_spec.supported_ops = [
+        tf.lite.OpsSet.TFLITE_BUILTINS,
+        tf.lite.OpsSet.SELECT_TF_OPS
+    ]
 
     # Convert to TF Lite with quantization
     converter.optimizations = [tf.lite.Optimize.DEFAULT]
