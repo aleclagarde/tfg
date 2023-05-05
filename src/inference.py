@@ -5,8 +5,9 @@ from inference_functions import inference
 from inference_utils import add_measurements
 
 
-models = ['gpt2']
+models = ['t5']
 number_of_measurements = 1
+data_size = 1
 
 df = pd.DataFrame(columns=['timestamp', 'project_name', 'run_id', 'duration', 'emissions', 'emissions_rate',
                            'cpu_power', 'gpu_power', 'ram_power', 'cpu_energy', 'gpu_energy', 'ram_energy',
@@ -21,10 +22,12 @@ for model_short_name in models:
                      '-tf-quantized']
     for suf in models_suffix:
         model_name = model_short_name + suf
+        model_correctness = []
         for i in range(number_of_measurements):
-            correct = inference(model_name, model_short_name, number_of_measurements)
-            df = add_measurements(df, number_of_measurements=number_of_measurements, model_name=model_name,
-                                  iteration=i+1, correctness=False)
+            correctness = inference(model_name, model_short_name, number_of_measurements)
+            model_correctness.append(correctness)
+        df = add_measurements(df, number_of_measurements=number_of_measurements, model_name=model_name,
+                              correctness=model_correctness)
 
 df.to_csv('inference_results.csv')
 
