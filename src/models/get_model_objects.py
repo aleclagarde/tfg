@@ -1,8 +1,8 @@
 # Transformers import, it imports the models and tokenizers for all 9 models
 from transformers import (
     BertTokenizer,
-    BertModel,
-    TFBertModel,
+    BertForMaskedLM,
+    TFBertForMaskedLM,
     GPT2Tokenizer,
     GPT2LMHeadModel,
     TFGPT2LMHeadModel,
@@ -30,8 +30,8 @@ models = {
     "bert": {
         "full_name": "bert-base-uncased",
         "constructor_tokenizer": BertTokenizer,
-        "constructor_torch": BertModel,
-        "constructor_tf": TFBertModel,
+        "constructor_torch": BertForMaskedLM,
+        "constructor_tf": TFBertForMaskedLM,
     },
     "gpt2": {
         "full_name": "gpt2",
