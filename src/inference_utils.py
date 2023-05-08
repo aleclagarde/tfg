@@ -37,6 +37,8 @@ def bleu_score(reference_str: str, generated_str: str):
 
 
 def self_bleu_score(generated_str: str, n: int = 4):
+    if len(generated_str) < 2:
+        return 0
     # Preprocess the generated string
     generated_tokens = nltk.word_tokenize(generated_str)
 

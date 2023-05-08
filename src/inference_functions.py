@@ -3,7 +3,7 @@ import torch
 import tensorflow as tf
 from datasets import load_dataset
 from codecarbon import track_emissions
-from transformers import pipeline, BertTokenizer, GPT2Tokenizer, T5Tokenizer
+from transformers import pipeline, BertTokenizer, GPT2Tokenizer, T5Tokenizer, AutoTokenizer
 import time
 import itertools
 from inference_utils import load_model, self_bleu_score
@@ -17,13 +17,14 @@ def inference(model_name: str, model_short_name: str, data_size: int):
 
     model, framework = load_model(model_short_name, 'models/saved/' + model_name)
 
-    bleu = []
     if model_short_name == 'bert':
         bleu = bert(model_name=model_name, model=model, framework=framework, data_size=data_size)
     elif model_short_name == 'gpt2':
         bleu = gpt2(model_name=model_name, model=model, framework=framework, data_size=data_size)
     elif model_short_name == 't5':
         bleu = t5(model_name=model_name, model=model, framework=framework, data_size=data_size)
+    else:
+        bleu = codegen(model_name=model_name, model=model, framework=framework, data_size=data_size)
     return sum(bleu) / len(bleu)
 
 
@@ -46,7 +47,7 @@ def infer_bert(text: str, model, tokenizer, framework: str, quantized: bool):
         predicted_word = tokenizer.decode([predicted_index])
 
         # Replace the masked token with the predicted word
-        output = text.replace('[MASK]', predicted_word)
+        output = text.replace('<mask>', predicted_word)
     else:
         if quantized:
             input_ids = tokenizer.encode(text, add_special_tokens=True)
@@ -71,23 +72,22 @@ def infer_bert(text: str, model, tokenizer, framework: str, quantized: bool):
             predicted_word = tokenizer.decode([predicted_index])
 
             # Replace the masked token with the predicted word
-            output = text.replace('[MASK]', predicted_word)
+            output = text.replace('<mask>', predicted_word)
     return output
 
 
 def bert(model_name: str, model, framework: str, data_size: int):
     tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
 
-    # bert_dataset = load_dataset("openwebtext", split='test', streaming=True)
-    # bert_dataset = itertools.islice(gpt2_dataset, data_size)
-    bert_dataset = [{'text': "April is the [MASK] month"}]
+    # bert_dataset = load_dataset('rcds/wikipedia-persons-masked', split='test', streaming=True)
+    # bert_dataset = itertools.islice(bert_dataset, data_size)
 
     i = 0
     bleu = []
     for data in bert_dataset:
-        text = data['text']
+        print(data['text'])
         start_time = time.time()
-        output = infer_bert(text=text, model=model, tokenizer=tokenizer, framework=framework,
+        output = infer_bert(text=data['text'], model=model, tokenizer=tokenizer, framework=framework,
                             quantized='quantized' in model_name)
         end_time = time.time()
         elapsed_time = end_time - start_time
@@ -99,8 +99,8 @@ def bert(model_name: str, model, framework: str, data_size: int):
     return bleu
 
 
-def infer_gpt2(text: str, model, tokenizer, framework: str, quantized: bool, length: int = 30,
-               temperature: float = 0.7) -> str:
+def infer_text_generation(text: str, model, tokenizer, framework: str, quantized: bool, length: int = 30,
+                          temperature: float = 0.7) -> str:
     if framework == 'pt':
         generator = pipeline("text-generation", model=model, tokenizer=tokenizer)
 
@@ -115,7 +115,7 @@ def infer_gpt2(text: str, model, tokenizer, framework: str, quantized: bool, len
             output = model.predict(input_ids)
             output_ids = np.argmax(output, axis=-1)
             output_str = tokenizer.decode(output_ids[0], skip_special_tokens=True)
-            return text + output_str
+            return output_str
         else:
             prompt_tokens = tokenizer.encode(text)
             input_seq = tf.constant([prompt_tokens])
@@ -145,8 +145,8 @@ def gpt2(model_name: str, model, framework: str, data_size: int):
     for data in gpt2_dataset:
         text = data['text']
         start_time = time.time()
-        output = infer_gpt2(text=text, model=model, tokenizer=tokenizer, framework=framework,
-                            quantized='quantized' in model_name)
+        output = infer_text_generation(text=text, model=model, tokenizer=tokenizer, framework=framework,
+                                       quantized='quantized' in model_name)
         end_time = time.time()
         elapsed_time = end_time - start_time
         print("#############################################################################################")
@@ -223,5 +223,29 @@ def t5(model_name: str, model, framework: str, data_size: int):
         print("#############################################################################################")
 
         bleu.append(output == target)
+        i = i + 1
+    return bleu
+
+
+def codegen(model_name: str, model, framework: str, data_size: int):
+    if 'parrot' in model_name:
+        tokenizer = AutoTokenizer.from_pretrained("codeparrot/codeparrot-small")
+    else:
+        tokenizer = GPT2Tokenizer.from_pretrained("microsoft/CodeGPT-small-py")
+
+    dataset = [{"text": "def hello_world():"}]
+    i = 0
+    bleu = []
+    for data in dataset:
+        text = data['text']
+        start_time = time.time()
+        output = infer_text_generation(text=text, model=model, tokenizer=tokenizer, framework=framework,
+                                       quantized='quantized' in model_name)
+        end_time = time.time()
+        elapsed_time = end_time - start_time
+        print("#############################################################################################")
+        print(f'({i + 1}/{data_size}) Output : {output} Time taken: {elapsed_time} seconds')
+        print("#############################################################################################")
+        bleu.append(self_bleu_score(output))
         i = i + 1
     return bleu
