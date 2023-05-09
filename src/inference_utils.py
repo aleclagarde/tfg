@@ -85,10 +85,13 @@ def load_model(model_short_name: str, path: str):
 
     :param model_short_name: Name of the model to load.
     :param path: Path of the model to load.
-    :return: Loaded model and framework identifier.
+    :return: Loaded model, tokenizer and framework identifier.
     """
-    constructor_torch = get_model_objects(model_name=model_short_name)['constructor_torch']
-    constructor_tf = get_model_objects(model_name=model_short_name)['constructor_tf']
+    objects = get_model_objects(model_name=model_short_name)
+
+    constructor_torch = objects['constructor_torch']
+    constructor_tf = objects['constructor_tf']
+    tokenizer = objects['constructor_tokenizer'].from_pretrained(objects['full_name'])
 
     if 'torch' in path:
         framework = 'pt'
@@ -103,4 +106,4 @@ def load_model(model_short_name: str, path: str):
         else:
             model = constructor_tf.from_pretrained(path)
 
-    return model, framework
+    return model, tokenizer, framework
