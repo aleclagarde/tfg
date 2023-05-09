@@ -39,7 +39,7 @@ from codecarbon import track_emissions
 
 
 @track_emissions
-def prune_torch(model, model_name: str, cf: float):
+def prune_torch(model, model_name: str, cf: float, cv: bool):
     """
     This function prunes a pretrained PyTorch model from the transformers library given the pruning coefficient and
     saves the pruned model in disk.
@@ -47,10 +47,18 @@ def prune_torch(model, model_name: str, cf: float):
     :param model: PyTorch model from the transformers' library.
     :param model_name: Short model name (eg. 't5').
     :param cf: Pruning coefficient.
+    :param cv: Whether the model is from the Computer Vision domain.
     """
-    for name, module in model.named_modules():
-        if isinstance(module, torch.nn.Linear) and "weight" in name:
-            prune.l1_unstructured(module, name='weight', amount=cf)
+    if cv:
+        if model_name == 'resnet':
+            to_prune = model.classifier[-1]
+        else:
+            to_prune = model.classifier
+        prune.l1_unstructured(to_prune, name='weight', amount=cf)
+    else:
+        for name, module in model.named_modules():
+            if isinstance(module, torch.nn.Linear) and "weight" in name:
+                prune.l1_unstructured(module, name='weight', amount=cf)
 
     # Save the pruned model to disk
     model.save_pretrained(f"saved/{model_name}-torch-pruned")
@@ -75,7 +83,7 @@ def prune_tf(model, model_name: str, cf: float):
 
     # Loop through the model's submodules and prune its parameters
     for submodule in model.submodules:
-        if 'mlp' in submodule.name:
+        if 'mlp' in submodule.name or 'dense' in submodule.name or 'convolution' in submodule.name:
             # Create a custom PrunableLayer for the unsupported layer
             class PrunableLayer(tf.keras.layers.Layer, tfmot.sparsity.keras.PrunableLayer):
                 def __init__(self, layer):
@@ -196,7 +204,7 @@ def add_measurements(dataframe: pd.DataFrame, number_of_measurements: int, model
 
     if model_name in ['bert', 'gpt2', 't5']:
         domain = 'NLP'
-    elif model_name in ['vit', 'clip', 'segformer']:
+    elif model_name in ['resnet', 'vit', 'convnext']:
         domain = 'CV'
     else:
         domain = 'CG'
