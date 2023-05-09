@@ -23,7 +23,7 @@ from optimize_utils import prune_torch, prune_tf, quantize_torch, quantize_tf, a
 from get_model_objects import get_model_objects
 
 
-models = ['bert', 'gpt2', 't5', 'vit', 'clip', 'segformer', 'codeparrot', 'codeberta', 'codegpt']
+models = ['bert', 'gpt2', 't5', 'resnet', 'vit', 'convnext', 'codeparrot', 'codeberta', 'codegpt']
 new_measurements_table = True
 
 number_of_measurements = 30
@@ -66,7 +66,7 @@ for model_name in models:
         print(f"Torch pruning: {model_name} with coefficient {pruning_cf}. Iteration: {i+1}")
         print("#############################################################################################")
         model_torch = model_dict["constructor_torch"].from_pretrained(f"saved/{model_name}-torch-baseline")
-        prune_torch(model=model_torch, model_name=model_name, cf=pruning_cf)
+        prune_torch(model=model_torch, model_name=model_name, cf=pruning_cf, cv=model_name in ['resnet', 'vit', 'convnext'])
     df = add_measurements(dataframe=df, number_of_measurements=number_of_measurements, model_name=model_name,
                           framework='torch', strategy='pruning')
 
