@@ -7,9 +7,7 @@ from transformers import pipeline
 import time
 import itertools
 from inference_utils import load_model, self_bleu_score
-import nltk
-nltk.download('wordnet')
-from nltk.corpus import wordnet
+import ast
 
 
 @track_emissions
@@ -24,8 +22,13 @@ def inference(model_name: str, model_short_name: str, data_size: int):
         correctness = text_generation(model_name=model_name, model=model, tokenizer=tokenizer, framework=framework,
                                       data_size=data_size)
     elif model_short_name in ['resnet', 'vit', 'convnext']:
+        # Read the labels file
+        with open('imagenet1000_idx_to_labels.txt', 'r') as f:
+            my_dict_str = f.read()
+
+        imagenet_labels = ast.literal_eval(my_dict_str)
         correctness = image_classification(model_name=model_name, model=model, processor=tokenizer, framework=framework,
-                                           data_size=data_size)
+                                           data_size=data_size, labels=imagenet_labels)
     else:
         correctness = code_generation(model_name=model_name, model=model, tokenizer=tokenizer, framework=framework,
                                       data_size=data_size)
@@ -46,33 +49,31 @@ def text_generation(model_name: str, model, tokenizer, framework: str, data_size
         end_time = time.time()
         elapsed_time = end_time - start_time
         print("#############################################################################################")
-        print(f'({i + 1}/{data_size}) Output : {output} Time taken: {elapsed_time} seconds')
+        print(f'({i + 1}/{data_size}) Output: {output} Time taken: {elapsed_time} seconds')
         print("#############################################################################################")
         bleu.append(self_bleu_score(output))
         i = i + 1
     return bleu
 
 
-def image_classification(model_name: str, model, processor, framework: str, data_size: int):
-    dataset = load_dataset('cifar10', split='test', streaming=True)
+def image_classification(model_name: str, model, processor, framework: str, data_size: int, labels: dict):
+    # Need to login to huggingface (huggingface-cli login)
+    dataset = load_dataset('imagenet-1k', split='validation', streaming=True)
     dataset = itertools.islice(dataset, data_size)
-    labels = ['airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
 
     i = 0
     accuracy = []
     for data in dataset:
+        print(data)
         start_time = time.time()
-        output = infer_image_classification(image=data['img'], model=model, processor=processor, framework=framework,
+        output = infer_image_classification(image=data['image'], model=model, processor=processor, framework=framework,
                                             quantized='quantized' in model_name)
         end_time = time.time()
         elapsed_time = end_time - start_time
         print("#############################################################################################")
-        print(f'({i + 1}/{data_size}) Output : {output} Time taken: {elapsed_time} seconds')
+        print(f'({i+1}/{data_size}) Output: {output} Target: {labels[data["label"]]} Time taken: {elapsed_time} s')
         print("#############################################################################################")
-        output = wordnet.synsets(output)
-        label = wordnet.synsets(labels[data['label']])
-        common_synsets = set(output).intersection(set(label))
-        accuracy.append(len(common_synsets) > 0)
+        accuracy.append(output == labels[data['label']])
         i = i + 1
     return accuracy
 
@@ -89,7 +90,7 @@ def code_generation(model_name: str, model, tokenizer, framework: str, data_size
         end_time = time.time()
         elapsed_time = end_time - start_time
         print("#############################################################################################")
-        print(f'({i + 1}/{data_size}) Output : {output} Time taken: {elapsed_time} seconds')
+        print(f'({i + 1}/{data_size}) Output: {output} Time taken: {elapsed_time} seconds')
         print("#############################################################################################")
         bleu.append(self_bleu_score(output))
         i = i + 1
@@ -131,11 +132,19 @@ def infer_text_generation(text: str, model, tokenizer, framework: str, quantized
 
 
 def infer_image_classification(image, model, processor, framework, quantized):
-    inputs = processor(image, return_tensors="pt")
+    inputs = processor(image, return_tensors=framework)
 
-    with torch.no_grad():
-        logits = model(**inputs).logits
+    if framework == 'pt':
+        with torch.no_grad():
+            logits = model(**inputs).logits
 
-    # model predicts one of the 1000 ImageNet classes
-    predicted_label = logits.argmax(-1).item()
-    return model.config.id2label[predicted_label]
+        # model predicts one of the 1000 ImageNet classes
+        predicted_label = logits.argmax(-1).item()
+        return model.config.id2label[predicted_label]
+    else:
+        # Run inference on the input image
+        logits = model(inputs)[0]
+
+        # Model predicts one of the 1000 ImageNet classes
+        predicted_label = tf.argmax(logits, axis=-1).numpy()[0]
+        return model.config.id2label[predicted_label]

@@ -67,7 +67,7 @@ def add_measurements(dataframe: pd.DataFrame, number_of_measurements: int, model
     model_short_name = model_name.split('-')[0]
     if model_short_name in ['bert', 'gpt2', 't5']:
         domain = 'NLP'
-    elif model_short_name in ['vit', 'clip', 'segformer']:
+    elif model_short_name in ['resnet', 'vit', 'convnext']:
         domain = 'Computer Vision'
     else:
         domain = 'Code'
