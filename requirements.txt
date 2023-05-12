@@ -1,12 +1,7 @@
 numpy
-requests
-torch==1.12.*
-fastapi==0.74.*
-sentencepiece==0.1.*
+torch
 transformers
-uvicorn[standard]==0.17.*
 codecarbon
-gunicorn
 accelerate
 seaborn
 matplotlib
@@ -19,3 +14,4 @@ tensorflow
 tensorflow-model-optimization
 datasets
 nltk
+optimum[onnxruntime]
