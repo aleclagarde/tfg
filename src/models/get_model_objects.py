@@ -1,14 +1,13 @@
 # Transformers import, it imports the models and tokenizers for all 9 models
 from transformers import (
-    BertTokenizer,
-    BertLMHeadModel,
-    TFBertLMHeadModel,
     GPT2Tokenizer,
     GPT2LMHeadModel,
     TFGPT2LMHeadModel,
-    T5Tokenizer,
-    T5ForConditionalGeneration,
-    TFT5ForConditionalGeneration,
+    OPTForCausalLM,
+    TFOPTForCausalLM,
+    XLNetTokenizer,
+    XLNetModel,
+    TFXLNetModel,
     AutoImageProcessor,
     ResNetForImageClassification,
     TFResNetForImageClassification,
@@ -21,29 +20,27 @@ from transformers import (
     AutoTokenizer,
     AutoModelForCausalLM,
     TFAutoModelForCausalLM,
-    AutoModelForMaskedLM,
-    TFAutoModelForMaskedLM,
 )
 
 # Define the models constructors and their associated tokenizers
 models = {
-    "bert": {
-        "full_name": "bert-base-uncased",
-        "constructor_tokenizer": BertTokenizer,
-        "constructor_torch": BertLMHeadModel,
-        "constructor_tf": TFBertLMHeadModel,
-    },
     "gpt2": {
         "full_name": "gpt2",
         "constructor_tokenizer": GPT2Tokenizer,
         "constructor_torch": GPT2LMHeadModel,
         "constructor_tf": TFGPT2LMHeadModel,
     },
-    "t5": {
-        "full_name": "t5-base",
-        "constructor_tokenizer": T5Tokenizer,
-        "constructor_torch": T5ForConditionalGeneration,
-        "constructor_tf": TFT5ForConditionalGeneration,
+    "opt": {
+        "full_name": "facebook/opt-125m",
+        "constructor_tokenizer": AutoTokenizer,
+        "constructor_torch": OPTForCausalLM,
+        "constructor_tf": TFOPTForCausalLM,
+    },
+    "xlnet": {
+        "full_name": "xlnet-base-cased",
+        "constructor_tokenizer": XLNetTokenizer,
+        "constructor_torch": XLNetModel,
+        "constructor_tf": TFXLNetModel,
     },
     "resnet": {
         "full_name": "microsoft/resnet-50",
@@ -72,8 +69,8 @@ models = {
     "codeberta": {
         "full_name": "huggingface/CodeBERTa-small-v1",
         "constructor_tokenizer": AutoTokenizer,
-        "constructor_torch": AutoModelForMaskedLM,
-        "constructor_tf": TFAutoModelForMaskedLM,
+        "constructor_torch": AutoModelForCausalLM,
+        "constructor_tf": TFAutoModelForCausalLM,
     },
     "codegpt": {
         "full_name": "microsoft/CodeGPT-small-py",
