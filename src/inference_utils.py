@@ -19,7 +19,7 @@ This script contains auxiliary functions for the inference part of the project..
 
 import pandas as pd
 import torch
-import tensorflow as tf
+from optimum.onnxruntime import ORTModelForCausalLM, ORTModelForImageClassification
 import nltk
 nltk.download('punkt')
 
@@ -65,7 +65,7 @@ def add_measurements(dataframe: pd.DataFrame, number_of_measurements: int, model
     new_measurements = pd.read_csv(filepath_or_buffer='emissions.csv').tail(n=number_of_measurements)
 
     model_short_name = model_name.split('-')[0]
-    if model_short_name in ['bert', 'gpt2', 't5']:
+    if model_short_name in ['gpt2', 'opt', 'xlnet']:
         domain = 'NLP'
     elif model_short_name in ['resnet', 'vit', 'convnext']:
         domain = 'Computer Vision'
@@ -102,7 +102,10 @@ def load_model(model_short_name: str, path: str):
     else:
         framework = 'tf'
         if 'quantized' in path:
-            model = tf.keras.models.load_model(path)
+            if model_short_name in ['resnet', 'vit', 'convnext']:
+                model = ORTModelForImageClassification.from_pretrained(path)
+            else:
+                model = ORTModelForCausalLM.from_pretrained(path)
         else:
             model = constructor_tf.from_pretrained(path)
 

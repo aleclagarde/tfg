@@ -18,7 +18,7 @@ def inference(model_name: str, model_short_name: str, data_size: int):
 
     model, tokenizer, framework = load_model(model_short_name, 'models/saved/' + model_name)
 
-    if model_short_name in ['bert', 'gpt2', 't5']:
+    if model_short_name in ['gpt2', 'opt', 'xlnet']:
         correctness = text_generation(model_name=model_name, model=model, tokenizer=tokenizer, framework=framework,
                                       data_size=data_size)
     elif model_short_name in ['resnet', 'vit', 'convnext']:
@@ -107,13 +107,8 @@ def infer_text_generation(text: str, model, tokenizer, framework: str, quantized
         return output[0]["generated_text"]
     else:
         if quantized:
-            input_ids = tokenizer.encode(text, add_special_tokens=True)
-            input_ids = np.array(input_ids)[np.newaxis, :]
-            # Perform inference on the preprocessed input
-            output = model.predict(input_ids)
-            output_ids = np.argmax(output, axis=-1)
-            output_str = tokenizer.decode(output_ids[0], skip_special_tokens=True)
-            return output_str
+            onnx_clx = pipeline("text-generation", model=model, tokenizer=tokenizer)
+            return onnx_clx(text)[0]['generated_text']
         else:
             prompt_tokens = tokenizer.encode(text)
             input_seq = tf.constant([prompt_tokens])
