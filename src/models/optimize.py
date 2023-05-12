@@ -23,7 +23,7 @@ from optimize_utils import prune_torch, prune_tf, quantize_torch, quantize_tf, a
 from get_model_objects import get_model_objects
 
 
-models = ['bert', 'gpt2', 't5', 'resnet', 'vit', 'convnext', 'codeparrot', 'codeberta', 'codegpt']
+models = ['gpt2', 'opt', 'xlnet', 'resnet', 'vit', 'convnext', 'codeparrot', 'codegpt']
 new_measurements_table = True
 
 number_of_measurements = 30
@@ -102,8 +102,7 @@ for model_name in models:
         print(f"TF quantization: {model_name}. Iteration: {i+1}")
         print("#############################################################################################")
         model_tf = model_dict["constructor_tf"].from_pretrained(f"saved/{model_name}-tf-baseline")
-        tf_quantized_model = quantize_tf(model=model_tf)
-    tflite_to_keras(model=tf_quantized_model, model_name=model_name)
+        quantize_tf(model_name=model_name, long_model_name=model_dict['full_name'])
     df = add_measurements(dataframe=df, number_of_measurements=number_of_measurements, model_name=model_name,
                           framework='tf', strategy='quantization')
 
