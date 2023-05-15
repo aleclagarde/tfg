@@ -65,9 +65,9 @@ def add_measurements(dataframe: pd.DataFrame, number_of_measurements: int, model
     new_measurements = pd.read_csv(filepath_or_buffer='emissions.csv').tail(n=number_of_measurements)
 
     model_short_name = model_name.split('-')[0]
-    if model_short_name in ['gpt2', 'opt', 'xlnet']:
+    if model_short_name in ['gpt2', 'opt', 'gptj']:
         domain = 'NLP'
-    elif model_short_name in ['resnet', 'vit', 'convnext']:
+    elif model_short_name in ['resnet', 'vit', 'regnet']:
         domain = 'Computer Vision'
     else:
         domain = 'Code'
@@ -102,7 +102,7 @@ def load_model(model_short_name: str, path: str):
     else:
         framework = 'tf'
         if 'quantized' in path:
-            if model_short_name in ['resnet', 'vit', 'convnext']:
+            if model_short_name in ['resnet', 'vit', 'regnet']:
                 model = ORTModelForImageClassification.from_pretrained(path)
             else:
                 model = ORTModelForCausalLM.from_pretrained(path)

@@ -173,9 +173,9 @@ def add_measurements(dataframe: pd.DataFrame, number_of_measurements: int, model
     """
     new_measurements = pd.read_csv(filepath_or_buffer='emissions.csv').tail(n=number_of_measurements)
 
-    if model_name in ['gpt2', 'opt', 'xlnet']:
+    if model_name in ['gpt2', 'opt', 'gptj']:
         domain = 'NLP'
-    elif model_name in ['resnet', 'vit', 'convnext']:
+    elif model_name in ['resnet', 'vit', 'regnet']:
         domain = 'CV'
     else:
         domain = 'CG'

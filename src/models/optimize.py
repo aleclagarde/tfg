@@ -19,11 +19,11 @@ import os
 import pandas as pd
 
 # Auxiliary functions
-from optimize_utils import prune_torch, prune_tf, quantize_torch, quantize_tf, add_measurements, tflite_to_keras
+from optimize_utils import prune_torch, prune_tf, quantize_torch, quantize_tf, add_measurements
 from get_model_objects import get_model_objects
 
 
-models = ['gpt2', 'opt', 'xlnet', 'resnet', 'vit', 'convnext', 'codeparrot', 'codegpt']
+models = ['gpt2', 'opt', 'gptj', 'resnet', 'vit', 'regnet']
 new_measurements_table = True
 
 number_of_measurements = 30
