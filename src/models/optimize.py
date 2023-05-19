@@ -23,7 +23,7 @@ from optimize_utils import prune_torch, prune_tf, quantize_torch, quantize_tf, a
 from get_model_objects import get_model_objects
 
 
-models = ['gpt2', 'opt', 'gptj', 'resnet', 'vit', 'regnet']
+models = ['gpt2', 'opt', 'resnet', 'regnet', 'codeparrot', 'codegpt']
 new_measurements_table = True
 
 number_of_measurements = 30
@@ -34,10 +34,9 @@ if new_measurements_table:
                                'cpu_power', 'gpu_power', 'ram_power', 'cpu_energy', 'gpu_energy', 'ram_energy',
                                'energy_consumed', 'country_name', 'country_iso_code', 'region', 'cloud_provider',
                                'cloud_region', 'os', 'python_version', 'cpu_count', 'cpu_model', 'gpu_count',
-                               'gpu_model', 'longitude', 'latitude', 'ram_total_size', 'tracking_mode', 'on_cloud',
-                               'domain', 'model', 'framework', 'strategy', 'iteration'])
+                               'gpu_model', 'longitude', 'latitude', 'ram_total_size', 'tracking_mode', 'on_cloud'])
 else:
-    df = pd.read_csv('optimization_results.csv')
+    df = pd.read_csv('../../results/optimization_results.csv')
 
 
 # Loop over the models and the coefficients and prune each model
@@ -66,7 +65,7 @@ for model_name in models:
         print(f"Torch pruning: {model_name} with coefficient {pruning_cf}. Iteration: {i+1}")
         print("#############################################################################################")
         model_torch = model_dict["constructor_torch"].from_pretrained(f"saved/{model_name}-torch-baseline")
-        prune_torch(model=model_torch, model_name=model_name, cf=pruning_cf, cv=model_name in ['resnet', 'vit', 'convnext'])
+        prune_torch(model=model_torch, model_name=model_name, cf=pruning_cf, cv=model_name in ['resnet', 'regnet'])
     df = add_measurements(dataframe=df, number_of_measurements=number_of_measurements, model_name=model_name,
                           framework='torch', strategy='pruning')
 
@@ -106,7 +105,7 @@ for model_name in models:
     df = add_measurements(dataframe=df, number_of_measurements=number_of_measurements, model_name=model_name,
                           framework='tf', strategy='quantization')
 
-df.to_csv('optimization_results.csv')
+df.to_csv('../../results/optimization_results.csv')
 
 # Remove the emissions file
 os.remove('emissions.csv')

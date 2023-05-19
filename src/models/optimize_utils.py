@@ -53,10 +53,7 @@ def prune_torch(model, model_name: str, cf: float, cv: bool):
     :param cv: Whether the model is from the Computer Vision domain.
     """
     if cv:
-        if model_name == 'resnet':
-            to_prune = model.classifier[-1]
-        else:
-            to_prune = model.classifier
+        to_prune = model.classifier[-1]
         prune.l1_unstructured(to_prune, name='weight', amount=cf)
     else:
         for name, module in model.named_modules():
@@ -134,8 +131,8 @@ def quantize_tf(model_name: str, long_model_name: str):
     This function quantizes a pretrained TensorFlow model from the transformers library using Optimum
     and returns the quantized model in Keras format.
 
-    :param model: TensorFlow model from the transformers' library.
     :param model_name: Short model name (eg. 'gpt2').
+    :param long_model_name: Full model name (eg. microsoft/resnet-50)
     """
     onnx_model_path = f"saved/{model_name}-onnx"
     quantized_model_path = f"saved/{model_name}-tf-quantized"
@@ -148,7 +145,8 @@ def quantize_tf(model_name: str, long_model_name: str):
     subprocess.run(command)
 
     # Construct the command to run
-    command = ["optimum-cli", "onnxruntime", "quantize", "--onnx_model", onnx_model_path, "--avx512", "-o", quantized_model_path]
+    command = ["optimum-cli", "onnxruntime", "quantize", "--onnx_model", onnx_model_path, "--avx512", "-o",
+               quantized_model_path]
 
     # Run the command
     subprocess.run(command)
