@@ -13,5 +13,6 @@ scikit-learn
 tensorflow
 tensorflow-model-optimization
 datasets
+Pillow
 nltk
 optimum[onnxruntime]
