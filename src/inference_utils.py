@@ -19,36 +19,74 @@ This script contains auxiliary functions for the inference part of the project..
 
 import pandas as pd
 import torch
+from datasets import load_dataset
+import itertools
+import os
+import shutil
 from optimum.onnxruntime import ORTModelForCausalLM, ORTModelForImageClassification
+import language_tool_python
+from models.get_model_objects import get_model_objects
 import nltk
 nltk.download('punkt')
 
-from models.get_model_objects import get_model_objects
+
+def language_model_score(text: str):
+    tool = language_tool_python.LanguageTool('en-US')  # Load the language model
+    matches = tool.check(text)  # Check the text for grammar and syntax errors
+    score = 1 - (len(matches) / len(text.split()))  # Calculate the language model score
+    return score
 
 
-def bleu_score(reference_str: str, generated_str: str):
-    # Preprocess the reference string
-    reference_tokens = nltk.word_tokenize(reference_str)
-    # Preprocess the generated string
-    generated_tokens = nltk.word_tokenize(generated_str)
+def download_datasets(data_size: int):
+    text_dataset = load_dataset('bookcorpus', split='train', streaming=True)
+    text_dataset = itertools.islice(text_dataset, data_size)
+    with open('../data/text_dataset.txt', 'w') as file:
+        for data_item in text_dataset:
+            # Convert the data item to a string representation
+            data_str = str(data_item)
 
-    weights = [(1.0/len(reference_tokens)) for _ in range(len(reference_tokens))]
-    return nltk.translate.bleu_score.sentence_bleu([reference_tokens], generated_tokens, weights=weights)
+            # Write the data item to the file
+            file.write(data_str)
+            file.write('\n')
 
+    # Need to login to huggingface (huggingface-cli login)
+    image_dataset = load_dataset('imagenet-1k', split='validation', streaming=True)
+    image_dataset = itertools.islice(image_dataset, data_size)
+    directory_path = '../data/image_dataset/'
+    # Remove the directory if it exists
+    if os.path.exists(directory_path):
+        shutil.rmtree(directory_path)
 
-def self_bleu_score(generated_str: str, n: int = 4):
-    if len(generated_str) < 2:
-        return 0
-    # Preprocess the generated string
-    generated_tokens = nltk.word_tokenize(generated_str)
+    # Create the directory
+    os.makedirs(directory_path)
 
-    bleu_scores = []
-    for i in range(len(generated_tokens) - n + 1):
-        reference_tokens = generated_tokens[i:i+n]
-        weights = [(1.0/len(reference_tokens)) for _ in range(len(reference_tokens))]
-        bleu_score = nltk.translate.bleu_score.sentence_bleu([generated_tokens], reference_tokens, weights=weights)
-        bleu_scores.append(bleu_score)
-    return sum(bleu_scores) / len(bleu_scores)
+    # Create a file to store the mapping of image file names to labels
+    mapping_file_path = os.path.join(directory_path, 'mapping.txt')
+    mapping_file = open(mapping_file_path, 'w')
+
+    for i, data_item in enumerate(image_dataset):
+        # Get the image and label from the data_item
+        image = data_item['image']
+        label = data_item['label']
+
+        # Save the image to the directory
+        image_path = os.path.join(directory_path, f'image_{i}.jpg')
+        image.save(image_path)
+
+        # Write the mapping of image file name to label in the mapping file
+        mapping_file.write(f'image_{i}.jpg\t{label}\n')
+    mapping_file.close()
+
+    code_dataset = load_dataset('code_search_net', split='test', streaming=True)
+    code_dataset = itertools.islice(code_dataset, data_size)
+    with open('../data/code_dataset.txt', 'w') as file:
+        for data_item in code_dataset:
+            # Convert the data item to a string representation
+            data_str = str(data_item)
+
+            # Write the data item to the file
+            file.write(data_str)
+            file.write('\n')
 
 
 def add_measurements(dataframe: pd.DataFrame, number_of_measurements: int, model_name: str,
@@ -72,8 +110,14 @@ def add_measurements(dataframe: pd.DataFrame, number_of_measurements: int, model
     else:
         domain = 'Code'
 
+    model = model_name.split('-')[0]
+    framework = model_name.split('-')[1]
+    version = model_name.split('-')[2]
+
     new_measurements['domain'] = domain
-    new_measurements['model'] = model_name
+    new_measurements['model'] = model
+    new_measurements['framework'] = framework
+    new_measurements['version'] = version
     new_measurements['iteration'] = [x for x in range(1, number_of_measurements+1)]
     new_measurements['correctness'] = correctness
     return pd.concat([dataframe, new_measurements], axis=0)
