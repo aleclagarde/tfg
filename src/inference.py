@@ -32,7 +32,7 @@ for model_short_name in models:
         df = add_measurements(df, number_of_measurements=number_of_measurements, model_name=model_name,
                               correctness=model_correctness)
 
-df.to_csv('inference_results.csv')
+df.to_csv('../data/inference_results.csv')
 
 # Remove the emissions file
 os.remove('emissions.csv')

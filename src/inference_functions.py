@@ -83,11 +83,8 @@ def code_generation(model_name: str, model, tokenizer, framework: str):
     bleu = []
     with open('../data/code_dataset.txt', 'r') as dataset:
         for data in dataset:
-            # Safely evaluate each line as a dictionary object
-            data = ast.literal_eval(data)
-            funct = data['whole_func_string'].split(':')[0] + ':'
             start_time = time.time()
-            output = infer_text_generation(text=funct, model=model, tokenizer=tokenizer, framework=framework,
+            output = infer_text_generation(text=data, model=model, tokenizer=tokenizer, framework=framework,
                                            quantized='quantized' in model_name)
             end_time = time.time()
             elapsed_time = end_time - start_time

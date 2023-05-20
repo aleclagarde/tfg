@@ -81,8 +81,10 @@ def download_datasets(data_size: int):
     code_dataset = itertools.islice(code_dataset, data_size)
     with open('../data/code_dataset.txt', 'w') as file:
         for data_item in code_dataset:
+            # Extract only the function header
+            funct = data_item['whole_func_string'].split(':')[0] + ':'
             # Convert the data item to a string representation
-            data_str = str(data_item)
+            data_str = str(funct)
 
             # Write the data item to the file
             file.write(data_str)
