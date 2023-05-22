@@ -5,7 +5,7 @@ from transformers import pipeline
 import time
 import os
 from PIL import Image
-from inference_utils import load_model, language_model_score
+from inference_utils import load_model, language_model_score, pep8_score
 import ast
 
 
@@ -22,9 +22,9 @@ def inference(model_name: str, model_short_name: str):
     elif model_short_name in ['resnet', 'vit', 'regnet']:
         # Read the labels file
         with open('../data/imagenet1000_idx_to_labels.txt', 'r') as f:
-            my_dict_str = f.read()
+            labels = f.read()
 
-        imagenet_labels = ast.literal_eval(my_dict_str)
+        imagenet_labels = ast.literal_eval(labels)
         correctness = image_classification(model_name=model_name, model=model, processor=tokenizer, framework=framework,
                                            labels=imagenet_labels)
     else:
@@ -35,7 +35,7 @@ def inference(model_name: str, model_short_name: str):
 
 def text_generation(model_name: str, model, tokenizer, framework: str):
     i = 0
-    bleu = []
+    lms = []
     with open('../data/text_dataset.txt', 'r') as dataset:
         for data in dataset:
             # Safely evaluate each line as a dictionary object
@@ -48,9 +48,10 @@ def text_generation(model_name: str, model, tokenizer, framework: str):
             print("#############################################################################################")
             print(f'Iteration: {i + 1} Output: {output} Time taken: {elapsed_time} s')
             print("#############################################################################################")
-            bleu.append(language_model_score(output.replace(data['text'], '')))
+            score = language_model_score(output)
+            lms.append(score)
             i = i + 1
-    return bleu
+    return lms
 
 
 def image_classification(model_name: str, model, processor, framework: str, labels: dict):
@@ -80,7 +81,7 @@ def image_classification(model_name: str, model, processor, framework: str, labe
 
 def code_generation(model_name: str, model, tokenizer, framework: str):
     i = 0
-    bleu = []
+    code_quality = []
     with open('../data/code_dataset.txt', 'r') as dataset:
         for data in dataset:
             start_time = time.time()
@@ -91,17 +92,20 @@ def code_generation(model_name: str, model, tokenizer, framework: str):
             print("#############################################################################################")
             print(f'Iteration: {i + 1} Output: {output} Time taken: {elapsed_time} s')
             print("#############################################################################################")
-            bleu.append(language_model_score(output))
+            pep_score = pep8_score(output)
+            lms = language_model_score(output)
+            score = 0.5*pep_score + 0.5*lms
+            print(pep_score, lms, score)
+            code_quality.append(score)
             i = i + 1
-    return bleu
+    return code_quality
 
 
-def infer_text_generation(text: str, model, tokenizer, framework: str, quantized: bool, length: int = 200,
-                          temperature: float = 0.7) -> str:
+def infer_text_generation(text: str, model, tokenizer, framework: str, quantized: bool, length: int = 50) -> str:
     if framework == 'pt':
         generator = pipeline("text-generation", model=model, tokenizer=tokenizer)
 
-        output = generator(text, max_length=length, do_sample=True, temperature=temperature)
+        output = generator(text, max_length=length)
 
         return output[0]["generated_text"]
     else:

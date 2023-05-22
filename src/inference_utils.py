@@ -23,21 +23,56 @@ from datasets import load_dataset
 import itertools
 import os
 import shutil
+import tempfile
 from optimum.onnxruntime import ORTModelForCausalLM, ORTModelForImageClassification
-import language_tool_python
+import requests
 from models.get_model_objects import get_model_objects
+import pep8
 import nltk
 nltk.download('punkt')
 
 
 def language_model_score(text: str):
-    tool = language_tool_python.LanguageTool('en-US')  # Load the language model
-    matches = tool.check(text)  # Check the text for grammar and syntax errors
-    score = 1 - (len(matches) / len(text.split()))  # Calculate the language model score
+    api_url = 'https://languagetool.org/api/v2/check'
+    params = {
+        'text': text,
+        'language': 'en-US',
+        'disabledRules': 'WHITESPACE_RULE'  # Exclude whitespace rule from analysis
+    }
+
+    response = requests.get(api_url, params=params)
+    data = response.json()
+    matches = data['matches']
+    try:
+        score = 1 - (len(matches) / len(text.split()))
+    except:
+        score = 0
+
+    return score
+
+
+def pep8_score(code):
+    # Create a temporary file with the code string
+    with tempfile.NamedTemporaryFile(suffix='.py') as temp_file:
+        temp_file.write(code.encode())
+        temp_file.flush()
+
+        # Create a StyleGuide object
+        pep8style = pep8.StyleGuide()
+
+        # Check the temporary file for PEP 8 compliance
+        report = pep8style.check_files([temp_file.name])
+
+        # Calculate the PEP 8 score
+        total_errors = report.get_count()
+        max_score = len(code.splitlines())
+        score = max(0, max_score - total_errors) / max_score
+
     return score
 
 
 def download_datasets(data_size: int):
+    # TEXT DATASET
     text_dataset = load_dataset('bookcorpus', split='train', streaming=True)
     text_dataset = itertools.islice(text_dataset, data_size)
     with open('../data/text_dataset.txt', 'w') as file:
@@ -49,6 +84,7 @@ def download_datasets(data_size: int):
             file.write(data_str)
             file.write('\n')
 
+    # IMAGE DATASET
     # Need to login to huggingface (huggingface-cli login)
     image_dataset = load_dataset('imagenet-1k', split='validation', streaming=True)
     image_dataset = itertools.islice(image_dataset, data_size)
@@ -77,7 +113,8 @@ def download_datasets(data_size: int):
         mapping_file.write(f'image_{i}.jpg\t{label}\n')
     mapping_file.close()
 
-    code_dataset = load_dataset('code_search_net', split='test', streaming=True)
+    # CODE DATASET
+    code_dataset = load_dataset('code_search_net', 'python', split='test', streaming=True)
     code_dataset = itertools.islice(code_dataset, data_size)
     with open('../data/code_dataset.txt', 'w') as file:
         for data_item in code_dataset:
