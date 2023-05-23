@@ -1,5 +1,6 @@
 import pandas as pd
 import os
+import time
 
 from inference_functions import inference
 from inference_utils import download_datasets, add_measurements
@@ -7,7 +8,7 @@ from inference_utils import download_datasets, add_measurements
 
 models = ['gpt2', 'opt', 'resnet', 'regnet', 'codeparrot', 'codegpt']
 number_of_measurements = 30
-data_size = 100
+data_size = 50
 
 df = pd.DataFrame(columns=['timestamp', 'project_name', 'run_id', 'duration', 'emissions', 'emissions_rate',
                            'cpu_power', 'gpu_power', 'ram_power', 'cpu_energy', 'gpu_energy', 'ram_energy',
@@ -19,7 +20,7 @@ print('DOWNLOADING DATASETS...')
 download_datasets(data_size=data_size)
 print('DATASETS DOWNLOADED')
 
-
+start = time.time()
 for model_short_name in models:
     models_suffix = ['-torch-baseline', '-torch-pruned', '-torch-quantized.pth', '-tf-baseline', '-tf-pruned',
                      '-tf-quantized']
@@ -32,7 +33,9 @@ for model_short_name in models:
         df = add_measurements(df, number_of_measurements=number_of_measurements, model_name=model_name,
                               correctness=model_correctness)
 
-df.to_csv('../data/inference_results.csv')
+df.to_csv('../results/inference_results.csv')
 
 # Remove the emissions file
 os.remove('emissions.csv')
+end = time.time()
+print(f'Total time taken: {end-start}')

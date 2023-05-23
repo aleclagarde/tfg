@@ -35,7 +35,7 @@ def inference(model_name: str, model_short_name: str):
 
 def text_generation(model_name: str, model, tokenizer, framework: str):
     i = 0
-    lms = []
+    score = []
     with open('../data/text_dataset.txt', 'r') as dataset:
         for data in dataset:
             # Safely evaluate each line as a dictionary object
@@ -48,10 +48,10 @@ def text_generation(model_name: str, model, tokenizer, framework: str):
             print("#############################################################################################")
             print(f'Iteration: {i + 1} Output: {output} Time taken: {elapsed_time} s')
             print("#############################################################################################")
-            score = language_model_score(output)
-            lms.append(score)
+            lms = language_model_score(output)
+            score.append(lms)
             i = i + 1
-    return lms
+    return score
 
 
 def image_classification(model_name: str, model, processor, framework: str, labels: dict):
