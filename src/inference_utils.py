@@ -40,10 +40,13 @@ def language_model_score(text: str):
         'disabledRules': 'WHITESPACE_RULE'  # Exclude whitespace rule from analysis
     }
 
-    response = requests.get(api_url, params=params)
-    data = response.json()
-    matches = data['matches']
     try:
+        response = requests.get(api_url, params=params)
+    except:
+        return language_model_score(text)
+    try:
+        data = response.json()
+        matches = data['matches']
         score = 1 - (len(matches) / len(text.split()))
     except:
         score = 0
