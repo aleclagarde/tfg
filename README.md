@@ -54,16 +54,16 @@ It is structured as follows:
 │ └── optimization_results.csv <- Results from the optimization phase.
 │
 │
-├── src
-│ ├── models
-│ │ ├── saved <- Directory that stores the models.
-│ │ ├── get_model_objects.py <- Auxiliary script to access the objects of the desired model.
-│ │ ├── optimize.py <- Optimization script.
-│ │ └── optimize_utils.py <- Auxiliary optimization functions.
-│ │
-│ ├── inference.py <- Inference script.
-│ ├── inference_functions.py <- Auxiliary script with functions that perform the inference.
-│ └── inference_utils.py <- Auxiliary inference functions.
+└── src
+  ├── models
+  │ ├── saved <- Directory that stores the models.
+  │ ├── get_model_objects.py <- Auxiliary script to access the objects of the desired model.
+  │ ├── optimize.py <- Optimization script.
+  │ └── optimize_utils.py <- Auxiliary optimization functions.
+  │
+  ├── inference.py <- Inference script.
+  ├── inference_functions.py <- Auxiliary script with functions that perform the inference.
+  └── inference_utils.py <- Auxiliary inference functions.
 ```
 
 The first step is optimizing and saving the models. This is done by executing the ``optimize.py`` script. Once the
