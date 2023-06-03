@@ -1,0 +1,50 @@
+def get_vid_from_url(url):
+def sina_xml_to_url_list(xml_data):
+def makeMimi(upid):
+def fc2video_download(url, output_dir = '.', merge = True, info_only = False, **kwargs):
+def dailymotion_download(url, output_dir='.', merge=True, info_only=False, **kwargs):
+def dictify(r,root=True):
+def ucas_download_single(url, output_dir = '.', merge = False, info_only = False, **kwargs):
+def ucas_download_playlist(url, output_dir = '.', merge = False, info_only = False, **kwargs):
+def sina_download_by_vid(vid, title=None, output_dir='.', merge=True, info_only=False):
+def sina_download_by_vkey(vkey, title=None, output_dir='.', merge=True, info_only=False):
+def sina_download(url, output_dir='.', merge=True, info_only=False, **kwargs):
+def yixia_download(url, output_dir = '.', merge = True, info_only = False, **kwargs):
+def veoh_download(url, output_dir = '.', merge = False, info_only = False, **kwargs):
+def veoh_download_by_id(item_id, output_dir = '.', merge = False, info_only = False, **kwargs):
+def download_by_id(self, vid = '', title = None, output_dir='.', merge=True, info_only=False,**kwargs):
+def get_vid_from_url(self, url):
+def sprint(text, *colors):
+def print_log(text, *colors):
+def e(message, exit_code=None):
+def wtf(message, exit_code=1):
+def detect_os():
+def miaopai_download_by_fid(fid, output_dir = '.', merge = False, info_only = False, **kwargs):
+def vimeo_download_by_channel(url, output_dir='.', merge=False, info_only=False, **kwargs):
+def vimeo_download_by_channel_id(channel_id, output_dir='.', merge=False, info_only=False, **kwargs):
+def vimeo_download_by_id(id, title=None, output_dir='.', merge=True, info_only=False, **kwargs):
+def ckplayer_get_info_by_xml(ckinfo):
+def get_video_url_from_video_id(video_id):
+def get_vid_from_url(url):
+def get_mgtv_real_url(url):
+def get_head(repo_path):
+def legitimize(text, os=detect_os()):
+def get_terminal_size():
+def cbs_download(url, output_dir='.', merge=True, info_only=False, **kwargs):
+def download(self, **kwargs):
+def acfun_download_by_vid(vid, title, output_dir='.', merge=True, info_only=False, **kwargs):
+def main_dev(**kwargs):
+def ffmpeg_download_stream(files, title, ext, params={}, output_dir='.', stream=True):
+def match1(text, *patterns):
+def matchall(text, patterns):
+def parse_query_param(url, param):
+def ungzip(data):
+def undeflate(data):
+def get_content(url, headers={}, decoded=True):
+def post_content(url, headers={}, post_data={}, decoded=True, **kwargs):
+def parse_host(host):
+def print_more_compatible(*args, **kwargs):
+def showroom_get_roomid_by_room_url_key(room_url_key):
+def showroom_download_by_room_id(room_id, output_dir = '.', merge = False, info_only = False, **kwargs):
+def _wanmen_get_title_by_json_topic_part(json_content, tIndex, pIndex):
+def wanmen_download_by_course(json_api_content, output_dir='.', merge=True, info_only=False, **kwargs):

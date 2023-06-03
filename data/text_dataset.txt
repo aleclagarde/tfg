@@ -1,0 +1,50 @@
+{'text': 'usually , he would be tearing around the living room , playing with his toys .'}
+{'text': 'but just one look at a minion sent him practically catatonic .'}
+{'text': "that had been megan 's plan when she got him dressed earlier ."}
+{'text': "he 'd seen the movie almost by mistake , considering he was a little young for the pg cartoon , but with older cousins , along with her brothers , mason was often exposed to things that were older ."}
+{'text': 'she liked to think being surrounded by adults and older kids was one reason why he was a such a good talker for his age .'}
+{'text': "`` are n't you being a good boy ? ''"}
+{'text': 'she said .'}
+{'text': 'mason barely acknowledged her .'}
+{'text': 'instead , his baby blues remained focused on the television .'}
+{'text': 'since the movie was almost over , megan knew she better slip into the bedroom and finish getting ready .'}
+{'text': "each time she looked into mason 's face , she was grateful that he looked nothing like his father ."}
+{'text': 'his platinum blond hair and blue eyes were completely hers .'}
+{'text': 'it was only his build that he was taking after his father .'}
+{'text': "where megan was a diminutive 5'3 '' , davis was 6'1 '' and two hundred pounds ."}
+{'text': 'mason was already registering off the charts in height and weight according to his pediatrician .'}
+{'text': 'davis had seen mason only twice in his lifetime-the day he had been born and the day he came home from the hospital .'}
+{'text': "after that , he had n't been interested in any of the pictures and emails megan sent ."}
+{'text': "with his professional football career on the rise , davis had n't wanted to be shackled with the responsibilities of a baby ."}
+{'text': 'instead , he wanted to spend his time off the field partying until all hours of the night .'}
+{'text': 'he only paid child support when megan threatened to have his wages garnished .'}
+{'text': 'she dreaded the day when mason was old enough to ask about his father .'}
+{'text': 'she never wanted anything in the world to hurt him , and she knew that being rejected by his father would .'}
+{'text': 'with a sigh , she stepped into the dress and slid it over her hips .'}
+{'text': 'wrestling around to get the zipper all the way up caused her to huff and puff .'}
+{'text': 'standing back from the mirror , she turned to and fro to take in her appearance .'}
+{'text': "she 'd always loved how the dress made her feel sexy , but at the same time was very respectable ."}
+{'text': 'while it boasted a sweetheart neckline , the hemline fell just below her knees .'}
+{'text': "she put on her pearls-a high school graduation gift from her uncle aidan , or `` ankle '' , as she often called him ."}
+{'text': "aidan was her mother 's baby brother and only son of the family ."}
+{'text': 'when she was born , he was only eight and a half .'}
+{'text': 'as the first grandchild , megan spent a lot of time with her grandparents , and that in turn , meant she spent a lot of time with aidan .'}
+{'text': 'he had devoted hours to holding her and spoiling her rotten .'}
+{'text': "when it came time for her to talk , she just could n't seem to get `` uncle aidan '' out ."}
+{'text': "instead , she called him `` ankle . ''"}
+{'text': 'it was a nickname that had stuck with him even now that he was thirty-four and married .'}
+{'text': "while it had been no question that she wanted him as godfather for mason , she had been extremely honored when he and his wife , emma , had asked her to be their son , noah 's , godmother ."}
+{'text': 'she loved her newest cousin very much and planned to be the best godmother she could for him .'}
+{'text': 'as she stepped out of the bedroom , she found that mason had yet to move .'}
+{'text': "`` okay buddy , time to go . ''"}
+{'text': 'when he started to whine , she shook her head .'}
+{'text': '`` we have such a fun day ahead of us .'}
+{'text': "it 's noah 's baptism , and then there 's a party at uncle aidan and aunt emma 's house . ''"}
+{'text': "`` beau ? ''"}
+{'text': 'he asked .'}
+{'text': 'she laughed .'}
+{'text': "`` yes , you 'll get to see and play with beau , too . ''"}
+{'text': "as she went to the couch and picked him up , she could n't help finding it amusing that out of everyone he was going to see today , he was most excited about being with aidan and emma 's black lab , beau ."}
+{'text': 'one day when they had their own place again , she would get him a dog .'}
+{'text': 'he loved them too much to be denied .'}
+{'text': "`` oomph , '' she muttered , as they started up the basement stairs ."}
