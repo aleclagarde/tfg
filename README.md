@@ -34,6 +34,7 @@ conda because conda does not work for some packages.
 It is structured as follows:
 
 ```
+tfg
 ├── README.md <- The top-level README for this project.
 ├── requirements.txt <- The requirements file to reproduce the project environment.
 │
