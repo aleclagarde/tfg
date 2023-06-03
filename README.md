@@ -45,7 +45,7 @@ It is structured as follows:
 ├── data
 │ ├── image_dataset <- Dataset for the Computer Vision models' inference.
 │ ├── code_dataset.txt <- Dataset for the Code Generation models' inference.
-│ ├── imagenet1000_idx_to_labels.txt <- Dictionary that translates the ImageNet labels from numerical to string.
+│ ├── imagenet1000_idx_to_labels.txt <- Dictionary that translates the ImageNet labels from int to string.
 │ └── text_dataset.txt <- Dataset for the Text Generation models' inference.
 │
 │
@@ -57,7 +57,7 @@ It is structured as follows:
 ├── src
 │ ├── models
 │ │ ├── saved <- Directory that stores the models.
-│ │ ├── get_model_objects.py <- Auxiliary script that returns the dictionary with the objects of the desired model.
+│ │ ├── get_model_objects.py <- Auxiliary script to access the objects of the desired model.
 │ │ ├── optimize.py <- Optimization script.
 │ │ └── optimize_utils.py <- Auxiliary optimization functions.
 │ │
