@@ -1,3 +1,22 @@
+"""
+Get model objects
+=================
+
+.. module:: get_model_objects
+   :platform: Linux
+   :synopsis: Get model objects script.
+
+.. module_author:: Alec Lagarde Teixidó <aleclagarde@gmail.com>
+
+This script contains the initialization of the objects of each model and a function that returns a dictionary for a
+selected model.
+
+.. autosummary::
+   :toctree: generated/
+
+   get_model_objects
+"""
+
 # Transformers import, it imports the models and tokenizers for all 9 models
 from transformers import (
     GPT2Tokenizer,
@@ -6,14 +25,9 @@ from transformers import (
     OPTForCausalLM,
     TFOPTForCausalLM,
     AutoTokenizer,
-    GPTJForCausalLM,
-    TFGPTJForCausalLM,
     AutoImageProcessor,
     ResNetForImageClassification,
     TFResNetForImageClassification,
-    ViTFeatureExtractor,
-    ViTForImageClassification,
-    TFViTForImageClassification,
     AutoFeatureExtractor,
     RegNetForImageClassification,
     TFRegNetForImageClassification,
@@ -35,23 +49,11 @@ models = {
         "constructor_torch": OPTForCausalLM,
         "constructor_tf": TFOPTForCausalLM,
     },
-    "gptj": {
-        "full_name": "EleutherAI/gpt-j-6b",
-        "constructor_tokenizer": AutoTokenizer,
-        "constructor_torch": GPTJForCausalLM,
-        "constructor_tf": TFGPTJForCausalLM,
-    },
     "resnet": {
         "full_name": "microsoft/resnet-50",
         "constructor_tokenizer": AutoImageProcessor,
         "constructor_torch": ResNetForImageClassification,
         "constructor_tf": TFResNetForImageClassification,
-    },
-    "vit": {
-        "full_name": "google/vit-base-patch16-224",
-        "constructor_tokenizer": ViTFeatureExtractor,
-        "constructor_torch": ViTForImageClassification,
-        "constructor_tf": TFViTForImageClassification,
     },
     "regnet": {
         "full_name": "facebook/regnet-y-008",
@@ -61,12 +63,6 @@ models = {
     },
     "codeparrot": {
         "full_name": "codeparrot/codeparrot-small",
-        "constructor_tokenizer": AutoTokenizer,
-        "constructor_torch": AutoModelForCausalLM,
-        "constructor_tf": TFAutoModelForCausalLM,
-    },
-    "codeberta": {
-        "full_name": "huggingface/CodeBERTa-small-v1",
         "constructor_tokenizer": AutoTokenizer,
         "constructor_torch": AutoModelForCausalLM,
         "constructor_tf": TFAutoModelForCausalLM,

@@ -15,5 +15,4 @@ tensorflow-model-optimization
 datasets
 Pillow
 pep8
-nltk
 optimum[onnxruntime]

@@ -23,20 +23,17 @@ from optimize_utils import prune_torch, prune_tf, quantize_torch, quantize_tf, a
 from get_model_objects import get_model_objects
 
 
+# Define the models, number of measurements and pruning coefficient
 models = ['gpt2', 'opt', 'resnet', 'regnet', 'codeparrot', 'codegpt']
-new_measurements_table = True
-
 number_of_measurements = 30
 pruning_cf = 0.2
 
-if new_measurements_table:
-    df = pd.DataFrame(columns=['timestamp', 'project_name', 'run_id', 'duration', 'emissions', 'emissions_rate',
-                               'cpu_power', 'gpu_power', 'ram_power', 'cpu_energy', 'gpu_energy', 'ram_energy',
-                               'energy_consumed', 'country_name', 'country_iso_code', 'region', 'cloud_provider',
-                               'cloud_region', 'os', 'python_version', 'cpu_count', 'cpu_model', 'gpu_count',
-                               'gpu_model', 'longitude', 'latitude', 'ram_total_size', 'tracking_mode', 'on_cloud'])
-else:
-    df = pd.read_csv('../../results/optimization_results.csv')
+# Initialize the results dataframe
+df = pd.DataFrame(columns=['timestamp', 'project_name', 'run_id', 'duration', 'emissions', 'emissions_rate',
+                           'cpu_power', 'gpu_power', 'ram_power', 'cpu_energy', 'gpu_energy', 'ram_energy',
+                           'energy_consumed', 'country_name', 'country_iso_code', 'region', 'cloud_provider',
+                           'cloud_region', 'os', 'python_version', 'cpu_count', 'cpu_model', 'gpu_count',
+                           'gpu_model', 'longitude', 'latitude', 'ram_total_size', 'tracking_mode', 'on_cloud'])
 
 
 # Loop over the models and the coefficients and prune each model
