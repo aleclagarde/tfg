@@ -9,10 +9,8 @@
 The research of this TFG consists of understanding how existing ML optimization frameworks impact the energy efficiency 
 and accuracy of ML models. We will study the following aspects of ML models deployment:
 
-1. Energy consumption measurement after applying model optimization (e.g., quantization,
-pruning)
-2. Impact regarding the optimization framework (PyTorch and Tensorflow)
-3. Context-aware evaluation of the energy efficiency for diverse ML models.
+1. Energy consumed measurement when applying model optimization (e.g., quantization, pruning).
+2. Energy consumed and correctness measurement when applying model inference.
 
 This project was developed from January to June 2023 as a Bachelor's Degree thesis for the Data Science and Engineering 
 Degree in the Universitat Politècnica de Catalunya.
