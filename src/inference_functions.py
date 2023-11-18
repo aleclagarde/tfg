@@ -6,8 +6,6 @@ Inference functions
    :platform: Linux
    :synopsis: Functions that performs the inference process.
 
-.. module_author:: Alec Lagarde Teixidó <aleclagarde@gmail.com>
-
 This script contains the functions that perform inference and manage the loading of the models, the datasets and the
 computation of the correctness.
 

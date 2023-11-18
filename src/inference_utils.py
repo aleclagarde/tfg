@@ -6,8 +6,6 @@ Inference utils
    :platform: Linux
    :synopsis: Inference auxiliary functions.
 
-.. module_author:: Alec Lagarde Teixidó <aleclagarde@gmail.com>
-
 This script contains auxiliary functions for the inference part of the project that compute the correctness, downloads
 the datasets, adds measurements to the results dataframe and loads the models.
 

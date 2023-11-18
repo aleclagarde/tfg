@@ -1,29 +1,18 @@
-# Energy efficiency measurement in optimization and inference of ML models
+# Energy Efficiency Measurement in Pruned and Quantized ML Models
 
-**Author: Alec Lagarde Teixidó**
-
-**Director: Silverio Martínez-Fernández**
-
-**Co-director: Matias Martinez**
-
-The research of this TFG consists of understanding how existing ML optimization frameworks impact the energy efficiency 
-and accuracy of ML models. We will study the following aspects of ML models deployment:
-
-1. Energy consumed measurement when applying model optimization (e.g., quantization, pruning).
-2. Energy consumed and correctness measurement when applying model inference.
-
-This project was developed from January to June 2023 as a Bachelor's Degree thesis for the Data Science and Engineering 
-Degree in the Universitat Politècnica de Catalunya.
+The research of this in progress research consists of understanding how existing ML optimization frameworks impact the 
+energy efficiency and accuracy of ML models. We will study the energy consumed and correctness measurement when applying 
+model inference.
 
 ----------
 
 ## Environment
-To replicate this projects environment, simply run ``conda create --name tfg python=3.10``. This will create the 
-environment (named **tfg**) with Python 3.10.
+To replicate this projects environment, simply run ``conda create --name <environment name> python=3.10``. This will 
+create the environment with Python 3.10.
 
-Once the environment is created, activate the environment with ``conda activate tfg``, after that, you can install all 
-necessary packages with ``pip install -r requirements.txt``. It is necessary to install the packages with pip instead of 
-conda because conda does not work for some packages.
+Once the environment is created, activate the environment with ``conda activate <environment name>``, after that, you 
+can install all necessary packages with ``pip install -r requirements.txt``. It is necessary to install the packages
+with pip instead of conda because conda does not work for some packages.
 
 ----------
 

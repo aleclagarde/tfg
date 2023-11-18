@@ -6,8 +6,6 @@ Optimization script
    :platform: Linux
    :synopsis: Optimization script.
 
-.. module_author:: Alec Lagarde Teixidó <aleclagarde@gmail.com>
-
 This script performs the whole process of optimization. That is, loading the base models, saving the baselines and
 perform pruning and quantization for both frameworks (PyTorch and TensorFlow).
 """

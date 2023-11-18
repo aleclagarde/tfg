@@ -6,8 +6,6 @@ Inference script
    :platform: Linux
    :synopsis: Inference script.
 
-.. module_author:: Alec Lagarde Teixidó <aleclagarde@gmail.com>
-
 This script performs the whole process of inference. That is, loading the models and infer it for ``data_size`` data
 points, computing the mean of the correctness of these data points and save it for the results' dataset.
 """

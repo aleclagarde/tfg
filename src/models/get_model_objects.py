@@ -6,8 +6,6 @@ Get model objects
    :platform: Linux
    :synopsis: Get model objects script.
 
-.. module_author:: Alec Lagarde Teixidó <aleclagarde@gmail.com>
-
 This script contains the initialization of the objects of each model and a function that returns a dictionary for a
 selected model.
 

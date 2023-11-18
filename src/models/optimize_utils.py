@@ -6,8 +6,6 @@ Optimization utils
    :platform: Linux
    :synopsis: Optimization auxiliary functions.
 
-.. module_author:: Alec Lagarde Teixidó <aleclagarde@gmail.com>
-
 This script contains auxiliary functions for the optimization part of the project, such as the functions that perform
 the optimizations, a function needed to convert back from TFLite model to TensorFlow model, and one to add the
 measurements to the results table.
