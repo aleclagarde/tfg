@@ -1,6 +1,6 @@
 # Energy Efficiency Measurement in Pruned and Quantized ML Models
 
-The research of this in progress research consists of understanding how existing ML optimization frameworks impact the 
+This in progress research consists of understanding how existing ML optimization frameworks impact the 
 energy efficiency and accuracy of ML models. We will study the energy consumed and correctness measurement when applying 
 model inference.
 
